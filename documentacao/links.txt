@@ -1,0 +1,11 @@
+https://start.spring.io/
+https://dbeaver.io/download/
+https://github.com/digytal/springunivers-01
+
+https://cidades.ibge.gov.br/brasil/pi/parnaiba/panorama - 2207702
+https://springunivers.slack.com/messages/CH9PVSH3Q/? 
+
+https://thoughts-on-java.org/complete-guide-inheritance-strategies-jpa-hibernate/
+https://docs.spring.io/spring-data/jpa/docs/current/reference/html/ - 4.1. Core concepts, 4.4.2. Query Creation, 5.3. Using @Query
+https://blog.caelum.com.br/consultas-fortemente-tipadas-com-jpa/
+http://www.java2s.com/Tutorials/Java/JPA/4520__JPA_Query_Function.htm
