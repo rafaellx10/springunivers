@@ -1,20 +1,36 @@
-# Compiled class file
+# Arquivos
 *.class
-
-# Log file
 *.log
-
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
 *.jar
 *.war
 *.nar
 *.ear
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+*.tar.gz
+*.rar
+.exe
+.iml
+.rar
+.classpath
+.project
+.sencha
+.history/
 hs_err_pid*
+
+#Diretorios
+node_modules/
+gradle/
+target/
+.gradle/
+.idea/
+.vscode/
+.settings/
+build/
+database/
+dbtest/
+.sencha/
+ext/
+extjs/
+dist/
+src-cordova/
+overrides/
+packages/
