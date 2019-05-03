@@ -9,14 +9,17 @@ import com.springunivers.start.AgendaV1Programa;
 
 @SpringBootApplication
 public class AgendaV1Application {
-
+	public static final String ROOT_PATH=System.getProperty("user.dir");
 	public static void main(String[] args) {
+		System.setProperty("app.home", ROOT_PATH);
 		SpringApplication.run(AgendaV1Application.class, args);
 	}
 	@Bean
-	public CommandLineRunner run(AgendaV1Programa bean) {
+	public CommandLineRunner run(AgendaV1Programa programa) {
 		return args -> {
-			bean.incluirContato();
+			//programa.incluirContato();
+			//programa.imprimirContatos();
+			programa.imprimirContatosOliveira();
 		};
 	}
 }

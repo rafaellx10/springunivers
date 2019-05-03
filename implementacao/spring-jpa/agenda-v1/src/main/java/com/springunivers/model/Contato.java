@@ -67,5 +67,10 @@ public class Contato {
 	public void setEstado(String estado) {
 		this.estado = estado;
 	}
+	@Override
+	public String toString() {
+		return "Contato [id=" + id + ", nome=" + nome + ", sobrenome=" + sobrenome + ", ddd=" + ddd + ", numero="
+				+ numero + ", cidade=" + cidade + ", estado=" + estado + "]";
+	}
 	
 }
