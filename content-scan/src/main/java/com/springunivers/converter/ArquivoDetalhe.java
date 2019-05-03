@@ -8,13 +8,42 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Extensao {
+public class ArquivoDetalhe {
 	@Autowired
 	@Qualifier("default")
 	private Tika defaultTika;
+
 	public String extensaoOriginal(File arquivo) throws Exception {
 		return defaultTika.detect(arquivo);
 	}
+
+	public long bytes(File arquivo) {
+		return arquivo.length();
+	}
+
+	public long kilobytes(File arquivo) {
+		return bytes(arquivo) / 1024;
+	}
+
+	public long megabytes(File arquivo) {
+		return kilobytes(arquivo) / 1024;
+	}
+
+	public long gigabytes(File arquivo) {
+		return megabytes(arquivo) / 1024;
+	}
+
+	public long terabytes(File arquivo) {
+		return gigabytes(arquivo) / 1024;
+	}
+	
+	public String mb(File arquivo) {
+		return megabytes(arquivo) + " Mb";
+	}
+	public String kb(File arquivo) {
+		return kilobytes(arquivo) + " Kb";
+	}
+	
 	/*
 	 * public static void main(String[] args) { try { File file = new
 	 * File("C:\\tci\\img\\3130\\1.tif"); //

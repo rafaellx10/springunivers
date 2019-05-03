@@ -11,7 +11,7 @@ import com.springunivers.start.ContentScanPrograma;
 public class ContentScanApplication {
 	public static void main(String[] args) {
 		System.setProperty("app.path", ContentScanPrograma.APP_PATH);
-		System.setProperty("scan.log", "scan");
+		System.setProperty("app.log", "app");
 		SpringApplication.run(ContentScanApplication.class, args);
 	}
 	@Bean
