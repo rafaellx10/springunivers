@@ -23,16 +23,12 @@ public class Conversor {
 	private static final Logger LOGGER = LogManager.getLogger(Conversor.class);
 	@Autowired
 	private ArquivoDetalhe detalhe;
-
+	
 	public void converter(Diretorio diretorio) throws Exception {
-		File dir = new File(diretorio.getNome());
-		long bytes = FileUtils.sizeOfDirectory(dir);
-		diretorio.setKb(detalhe.Kbytes(bytes));
-		diretorio.setMb(detalhe.Mbytes(bytes));
-		diretorio.setGb(detalhe.Gbytes(bytes));
-		
-		LOGGER.info("<INICIANDO> O processo de conversão no diretório: {} com {}(Kb) {}(Mb) {}(Gb) ", dir.getAbsolutePath(), diretorio.getKb(),diretorio.getMb(),diretorio.getGb() );
-		File[] arquivos = dir.listFiles();
+		diretorioVolume(diretorio, false);
+		String volume = String.format("%s %.2f (Kb) %.2f (Mb) %.2f (Gb) ",  diretorio.getNome(), diretorio.getKb(),diretorio.getMb(),diretorio.getGb() );
+		LOGGER.info("<INICIANDO> O processo de conversão do diretório: {} ", volume);
+		File[] arquivos = diretorio.getPasta().listFiles();
 		for (File arquivo : arquivos) {
 			if (arquivo.isFile() && jpgJpegOriginal(arquivo)) {
 				String kb = detalhe.kilobytes(arquivo);
@@ -41,10 +37,35 @@ public class Conversor {
 				String kbj = detalhe.kilobytes(jpg);
 				LOGGER.info("O arquivo {} {} <FOI> convertido para {} {} ", arquivo.getName(), kb, jpg.getName(), kbj);
 				converterJpgToTif(jpg);
+				removerJpg(jpg);
 			} else {
 				LOGGER.info("O arquivo {} {} <POSSUI> a extensão adequada ", arquivo.getName(), detalhe.kilobytes(arquivo));
 			}
 		}
+		
+		diretorioVolume(diretorio, true);
+		volume = String.format("%s %.2f (Kb) %.2f (Mb) %.2f (Gb) ",  diretorio.getNome(), diretorio.getKbNew(),diretorio.getMbNew(),diretorio.getGbNew() );
+		LOGGER.info("<FINALIZANDO> O processo de conversão do diretório: {} ", volume);
+		
+	}
+	private void removerJpg(File jpg) {
+		if(jpg.delete()){
+			LOGGER.info("O arquivo {} foi <REMOVIDO>", jpg);
+        }else
+        	LOGGER.info("O arquivo {} <NÃO> foi <REMOVIDO>", jpg);
+	}
+	private void diretorioVolume(Diretorio diretorio,boolean depois) {
+		long bytes = FileUtils.sizeOfDirectory(diretorio.getPasta());
+		if(depois) {
+			diretorio.setKbNew(detalhe.Kbytes(bytes));
+			diretorio.setMbNew(detalhe.Mbytes(bytes));
+			diretorio.setGbNew(detalhe.Gbytes(bytes));
+		}else {
+			diretorio.setKb(detalhe.Kbytes(bytes));
+			diretorio.setMb(detalhe.Mbytes(bytes));
+			diretorio.setGb(detalhe.Gbytes(bytes));
+		}
+		
 	}
 	private void converterJpgToTif(File jpg) throws Exception {
 		ImageWriter writer = null;
@@ -69,7 +90,7 @@ public class Conversor {
 
 			IIOImage iioImage = new IIOImage(jpgBuffer, null, null);
 			writer.write(null, iioImage, writeParam);
-			LOGGER.info("O arquivo {} {} <FINALIZADO> com sucesso!! ", tif.getName(), detalhe.kilobytes(tif));
+			LOGGER.info("O arquivo {} {} <CONVERTIDO> com sucesso!! ", tif.getName(), detalhe.kilobytes(tif));
 		} finally {
 			writer.dispose();
 			writer = null;

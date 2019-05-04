@@ -1,5 +1,7 @@
 package com.springunivers.model;
 
+import java.io.File;
+
 public class Diretorio {
 	private Integer id;
 	private String nome;
@@ -9,7 +11,7 @@ public class Diretorio {
 	private double kbNew;
 	private double mbNew;
 	private double gbNew;
-	
+	private File pasta;
 	public Integer getId() {
 		return id;
 	}
@@ -20,6 +22,10 @@ public class Diretorio {
 		super();
 		this.id = id;
 		this.nome = nome;
+		this.pasta=new File(nome);
+	}
+	public File getPasta() {
+		return pasta;
 	}
 	public double getKb() {
 		return kb;
