@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
@@ -39,16 +40,16 @@ public class Conversor {
 		File[] arquivos = diretorio.getPasta().listFiles();
 		for (File arquivo : arquivos) {
 			if (arquivo.isFile() && jpgJpegOriginal(arquivo)) {
-				String kb = detalhe.kilobytes(arquivo);
+				String mb = detalhe.megabytes(arquivo);
 				File jpg = getJpgFile(arquivo);
 				arquivo.renameTo(jpg);
-				String kbj = detalhe.kilobytes(jpg);
-				LOGGER.info("O arquivo {} {} <FOI> convertido para {} {} ", arquivo.getName(), kb, jpg.getName(), kbj);
+				String mbj = detalhe.megabytes(jpg);
+				LOGGER.info("O arquivo {} {} <FOI> convertido para {} {} ", arquivo.getName(), mb, jpg.getName(), mbj);
 				converterJpgToTif(jpg);
 				removerJpg(jpg);
 			} else {
 				LOGGER.info("O arquivo {} {} <POSSUI> a extensão adequada ", arquivo.getName(),
-						detalhe.kilobytes(arquivo));
+						detalhe.megabytes(arquivo));
 			}
 		}
 
@@ -58,37 +59,12 @@ public class Conversor {
 		LOGGER.info("<FINALIZANDO> O processo de conversão do diretório: {} ", volume);
 
 	}
-
-	private void csv(Diretorio diretorio) throws Exception {
-		String resumo = new SimpleDateFormat("yyyyMMdd-hhmm").format(new Date());
-		File file = new File(ContentScanPrograma.APP_PATH, "RESUMO_" + resumo + ".csv");
-		FileWriter fileWriter = new FileWriter("c:/temp/samplefile.txt", true);
-		StringBuilder sb = new StringBuilder();
-		if(!file.exists()) {
-			sb.append("DIRETORIO;KB;MB;GB;KB-ATUAL;MB-ATUAL;GB-ATUAL\n");
-		}
-		try (PrintWriter printWriter = new PrintWriter(fileWriter)) {
-			sb.append(diretorio.getNome()+";");
-			sb.append(diretorio.getKb()+";");
-			sb.append(diretorio.getMb()+";");
-			sb.append(diretorio.getGb()+";");
-			sb.append(diretorio.getKbNew()+";");
-			sb.append(diretorio.getMbNew()+";");
-			sb.append(diretorio.getGbNew()+";");
-			printWriter.println(sb.toString());
-			printWriter.close();
-		} finally {
-			LOGGER.info("<RESUMO> csv do diretório: {} ", diretorio.getNome());
-		}
-	}
-
 	private void removerJpg(File jpg) {
 		if (jpg.delete()) {
 			LOGGER.info("O arquivo {} foi <REMOVIDO>", jpg);
 		} else
 			LOGGER.info("O arquivo {} <NÃO> foi <REMOVIDO>", jpg);
 	}
-
 	private void diretorioVolume(Diretorio diretorio, boolean depois) {
 		long bytes = FileUtils.sizeOfDirectory(diretorio.getPasta());
 		if (depois) {
@@ -100,7 +76,6 @@ public class Conversor {
 			diretorio.setMb(detalhe.Mbytes(bytes));
 			diretorio.setGb(detalhe.Gbytes(bytes));
 		}
-
 	}
 
 	private void converterJpgToTif(File jpg) throws Exception {
@@ -126,12 +101,35 @@ public class Conversor {
 
 			IIOImage iioImage = new IIOImage(jpgBuffer, null, null);
 			writer.write(null, iioImage, writeParam);
-			LOGGER.info("O arquivo {} {} <CONVERTIDO> com sucesso!! ", tif.getName(), detalhe.kilobytes(tif));
+			LOGGER.info("O arquivo {} {} <CONVERTIDO> com sucesso!! ", tif.getName(), detalhe.megabytes(tif));
 		} finally {
 			writer.dispose();
 			writer = null;
 		}
 
+	}
+	private void csv(Diretorio diretorio) throws Exception {
+		StringBuilder sb = new StringBuilder();
+		String resumo = new SimpleDateFormat("yyyyMMdd").format(new Date());
+		File file = new File(ContentScanPrograma.APP_PATH, "RESUMO_" + resumo + ".csv");
+		if(!file.exists()) {
+			file.createNewFile();
+			sb.append("DIRETORIO;KB;MB;GB;KB-ATUAL;MB-ATUAL;GB-ATUAL\n");
+		}
+		FileWriter fileWriter = new FileWriter(file, true);
+		try (PrintWriter printWriter = new PrintWriter(fileWriter)) {
+			sb.append(diretorio.getNome()+";");
+			sb.append(String.format("%.2f",diretorio.getKb())+";");
+			sb.append(String.format("%.2f",diretorio.getMb())+";");
+			sb.append(String.format("%.2f",diretorio.getGb())+";");
+			sb.append(String.format("%.2f",diretorio.getKbNew())+";");
+			sb.append(String.format("%.2f",diretorio.getMbNew())+";");
+			sb.append(String.format("%.2f",diretorio.getGbNew())+";");
+			printWriter.println(sb.toString());
+			printWriter.close();
+		} finally {
+			LOGGER.info("<RESUMO> csv do diretório: {} ", diretorio.getNome());
+		}
 	}
 
 	private File getJpgFile(File tif) {

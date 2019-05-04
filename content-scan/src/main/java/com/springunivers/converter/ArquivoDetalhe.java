@@ -42,26 +42,21 @@ public class ArquivoDetalhe {
 		return kilobytes(arquivo.length());
 	}
 
-	public String kilobytes(long bytes) {
-		return Kbytes(bytes) + "Kb";
-	}
-
 	public String megabytes(File arquivo) {
 		return megabytes(arquivo.length());
 	}
-
-	public String megabytes(long bytes) {
-		return Mbytes(bytes) + "Mb";
-	}
-
 	public String gigabytes(File arquivo) {
 		return gigabytes(arquivo.length());
 	}
-
-	public String gigabytes(long bytes) {
-		return Gbytes(bytes) + "Gb";
+	public String kilobytes(long bytes) {
+		return String.format("%.2f",Kbytes(bytes)) + "Kb";
 	}
-
+	public String megabytes(long bytes) {
+		return String.format("%.2f",Mbytes(bytes)) + "Mb";
+	}
+	public String gigabytes(long bytes) {
+		return String.format("%.2f",Gbytes(bytes)) + "Gb";
+	}
 	public String extensaoOriginal(File arquivo) throws Exception {
 		return defaultTika.detect(arquivo);
 	}
