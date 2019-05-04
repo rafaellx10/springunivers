@@ -12,8 +12,8 @@
 	<groupId>com.springunivers</groupId>
 	<artifactId>content-scan</artifactId>
 	<version>1.0</version>
-	<name>agenda-v1</name>
-	<description>Fundamentos do Spring com JPA</description>
+	<name>content-scan</name>
+	<description>Aplicação de suporte da ferramenta Content</description>
 
 	<properties>
 		<java.version>1.8</java.version>
