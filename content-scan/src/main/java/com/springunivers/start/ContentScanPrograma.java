@@ -29,7 +29,7 @@ public class ContentScanPrograma {
 			for(String diretorio: scanDiretorios) {
 				conversor.converter(new Diretorio(id++,diretorio));
 			}
-			LOGGER.info("fim");
+			LOGGER.info("FIM DO PROCESSO");
 		} catch (Exception e) {
 			e.printStackTrace();
 			LOGGER.error(e.getMessage());

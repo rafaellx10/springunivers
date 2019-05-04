@@ -2,6 +2,12 @@ package com.springunivers.converter;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 
 import javax.imageio.IIOImage;
@@ -17,16 +23,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.springunivers.model.Diretorio;
+import com.springunivers.start.ContentScanPrograma;
 
 @Component
 public class Conversor {
 	private static final Logger LOGGER = LogManager.getLogger(Conversor.class);
 	@Autowired
 	private ArquivoDetalhe detalhe;
-	
+
 	public void converter(Diretorio diretorio) throws Exception {
 		diretorioVolume(diretorio, false);
-		String volume = String.format("%s %.2f (Kb) %.2f (Mb) %.2f (Gb) ",  diretorio.getNome(), diretorio.getKb(),diretorio.getMb(),diretorio.getGb() );
+		String volume = String.format("%s %.2f (Kb) %.2f (Mb) %.2f (Gb) ", diretorio.getNome(), diretorio.getKb(),
+				diretorio.getMb(), diretorio.getGb());
 		LOGGER.info("<INICIANDO> O processo de conversão do diretório: {} ", volume);
 		File[] arquivos = diretorio.getPasta().listFiles();
 		for (File arquivo : arquivos) {
@@ -39,34 +47,62 @@ public class Conversor {
 				converterJpgToTif(jpg);
 				removerJpg(jpg);
 			} else {
-				LOGGER.info("O arquivo {} {} <POSSUI> a extensão adequada ", arquivo.getName(), detalhe.kilobytes(arquivo));
+				LOGGER.info("O arquivo {} {} <POSSUI> a extensão adequada ", arquivo.getName(),
+						detalhe.kilobytes(arquivo));
 			}
 		}
-		
+
 		diretorioVolume(diretorio, true);
-		volume = String.format("%s %.2f (Kb) %.2f (Mb) %.2f (Gb) ",  diretorio.getNome(), diretorio.getKbNew(),diretorio.getMbNew(),diretorio.getGbNew() );
+		volume = String.format("%s %.2f (Kb) %.2f (Mb) %.2f (Gb) ", diretorio.getNome(), diretorio.getKbNew(),diretorio.getMbNew(), diretorio.getGbNew());
+		csv(diretorio);
 		LOGGER.info("<FINALIZANDO> O processo de conversão do diretório: {} ", volume);
-		
+
 	}
+
+	private void csv(Diretorio diretorio) throws Exception {
+		String resumo = new SimpleDateFormat("yyyyMMdd-hhmm").format(new Date());
+		File file = new File(ContentScanPrograma.APP_PATH, "RESUMO_" + resumo + ".csv");
+		FileWriter fileWriter = new FileWriter("c:/temp/samplefile.txt", true);
+		StringBuilder sb = new StringBuilder();
+		if(!file.exists()) {
+			sb.append("DIRETORIO;KB;MB;GB;KB-ATUAL;MB-ATUAL;GB-ATUAL\n");
+		}
+		try (PrintWriter printWriter = new PrintWriter(fileWriter)) {
+			sb.append(diretorio.getNome()+";");
+			sb.append(diretorio.getKb()+";");
+			sb.append(diretorio.getMb()+";");
+			sb.append(diretorio.getGb()+";");
+			sb.append(diretorio.getKbNew()+";");
+			sb.append(diretorio.getMbNew()+";");
+			sb.append(diretorio.getGbNew()+";");
+			printWriter.println(sb.toString());
+			printWriter.close();
+		} finally {
+			LOGGER.info("<RESUMO> csv do diretório: {} ", diretorio.getNome());
+		}
+	}
+
 	private void removerJpg(File jpg) {
-		if(jpg.delete()){
+		if (jpg.delete()) {
 			LOGGER.info("O arquivo {} foi <REMOVIDO>", jpg);
-        }else
-        	LOGGER.info("O arquivo {} <NÃO> foi <REMOVIDO>", jpg);
+		} else
+			LOGGER.info("O arquivo {} <NÃO> foi <REMOVIDO>", jpg);
 	}
-	private void diretorioVolume(Diretorio diretorio,boolean depois) {
+
+	private void diretorioVolume(Diretorio diretorio, boolean depois) {
 		long bytes = FileUtils.sizeOfDirectory(diretorio.getPasta());
-		if(depois) {
+		if (depois) {
 			diretorio.setKbNew(detalhe.Kbytes(bytes));
 			diretorio.setMbNew(detalhe.Mbytes(bytes));
 			diretorio.setGbNew(detalhe.Gbytes(bytes));
-		}else {
+		} else {
 			diretorio.setKb(detalhe.Kbytes(bytes));
 			diretorio.setMb(detalhe.Mbytes(bytes));
 			diretorio.setGb(detalhe.Gbytes(bytes));
 		}
-		
+
 	}
+
 	private void converterJpgToTif(File jpg) throws Exception {
 		ImageWriter writer = null;
 		try {
@@ -97,8 +133,7 @@ public class Conversor {
 		}
 
 	}
-	
-	
+
 	private File getJpgFile(File tif) {
 		String nome = tif.getName().replaceAll("\\.tif$", ".jpg");
 		File jpeg = new File(tif.getParent(), nome);
@@ -115,7 +150,7 @@ public class Conversor {
 		return detalhe.extensaoOriginal(arquivo).toLowerCase().contains("jpeg")
 				|| detalhe.extensaoOriginal(arquivo).toLowerCase().contains("jpg");
 	}
-	
+
 	/*
 	 * private void converterJpgToTif(File jpg) throws Exception { ImageWriter
 	 * writer = null; try { File tiffFile = getTifFile(jpg); BufferedImage jpgBuffer
