@@ -33,30 +33,37 @@ public class Conversor {
 	private ArquivoDetalhe detalhe;
 
 	public void converter(Diretorio diretorio) throws Exception {
-		diretorioVolume(diretorio, false);
-		String volume = String.format("%s %.2f (Kb) %.2f (Mb) %.2f (Gb) ", diretorio.getNome(), diretorio.getKb(),
-				diretorio.getMb(), diretorio.getGb());
-		LOGGER.info("<INICIANDO> O processo de conversão do diretório: {} ", volume);
-		File[] arquivos = diretorio.getPasta().listFiles();
-		for (File arquivo : arquivos) {
-			if (arquivo.isFile() && jpgJpegOriginal(arquivo)) {
-				String mb = detalhe.megabytes(arquivo);
-				File jpg = getJpgFile(arquivo);
-				arquivo.renameTo(jpg);
-				String mbj = detalhe.megabytes(jpg);
-				LOGGER.info("O arquivo {} {} <FOI> convertido para {} {} ", arquivo.getName(), mb, jpg.getName(), mbj);
-				converterJpgToTif(jpg);
-				removerJpg(jpg);
-			} else {
-				LOGGER.info("O arquivo {} {} <POSSUI> a extensão adequada ", arquivo.getName(),
-						detalhe.megabytes(arquivo));
+		if(diretorio.getEndereco().isDirectory()) {
+			diretorioVolume(diretorio, false);
+			String volume = String.format("%s %.2f (Kb) %.2f (Mb) %.2f (Gb) ", diretorio.getNome(), diretorio.getKb(),
+					diretorio.getMb(), diretorio.getGb());
+			diretorio.setInicio(new Date());
+			LOGGER.info("<INICIANDO> O processo de conversão do diretório: {} ", volume);
+			File[] arquivos = diretorio.getEndereco().listFiles();
+			diretorio.setTotal(arquivos.length);
+			for (File arquivo : arquivos) {
+				if (arquivo.isFile() && jpgJpegOriginal(arquivo)) {
+					String mb = detalhe.megabytes(arquivo);
+					File jpg = getJpgFile(arquivo);
+					arquivo.renameTo(jpg);
+					String mbj = detalhe.megabytes(jpg);
+					LOGGER.info("O arquivo {} {} <FOI> convertido para {} {} ", arquivo.getName(), mb, jpg.getName(), mbj);
+					converterJpgToTif(jpg);
+					removerJpg(jpg);
+				} else {
+					LOGGER.info("O arquivo {} {} <POSSUI> a extensão adequada ", arquivo.getName(),
+							detalhe.megabytes(arquivo));
+				}
 			}
+	
+			diretorioVolume(diretorio, true);
+			volume = String.format("%s %.2f (Kb) %.2f (Mb) %.2f (Gb) ", diretorio.getNome(), diretorio.getKbNew(),diretorio.getMbNew(), diretorio.getGbNew());
+			diretorio.setFim(new Date());
+			csv(diretorio);
+			LOGGER.info("<FINALIZANDO> O processo de conversão do diretório: {} ", volume);
+		}else {
+			LOGGER.info("<ATENCAO> o endereco {} <NÃO É UM DIRETÓRIO> ", diretorio.getEndereco());
 		}
-
-		diretorioVolume(diretorio, true);
-		volume = String.format("%s %.2f (Kb) %.2f (Mb) %.2f (Gb) ", diretorio.getNome(), diretorio.getKbNew(),diretorio.getMbNew(), diretorio.getGbNew());
-		csv(diretorio);
-		LOGGER.info("<FINALIZANDO> O processo de conversão do diretório: {} ", volume);
 
 	}
 	private void removerJpg(File jpg) {
@@ -66,7 +73,7 @@ public class Conversor {
 			LOGGER.info("O arquivo {} <NÃO> foi <REMOVIDO>", jpg);
 	}
 	private void diretorioVolume(Diretorio diretorio, boolean depois) {
-		long bytes = FileUtils.sizeOfDirectory(diretorio.getPasta());
+		long bytes = FileUtils.sizeOfDirectory(diretorio.getEndereco());
 		if (depois) {
 			diretorio.setKbNew(detalhe.Kbytes(bytes));
 			diretorio.setMbNew(detalhe.Mbytes(bytes));
@@ -109,22 +116,26 @@ public class Conversor {
 
 	}
 	private void csv(Diretorio diretorio) throws Exception {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
 		StringBuilder sb = new StringBuilder();
 		String resumo = new SimpleDateFormat("yyyyMMdd").format(new Date());
 		File file = new File(ContentScanPrograma.APP_PATH, "RESUMO_" + resumo + ".csv");
 		if(!file.exists()) {
 			file.createNewFile();
-			sb.append("DIRETORIO;KB;MB;GB;KB-ATUAL;MB-ATUAL;GB-ATUAL\n");
+			sb.append("DIRETORIO;ARQUIVOS;KB;MB;GB;KB-ATUAL;MB-ATUAL;GB-ATUAL;INICIO;FIM\n");
 		}
 		FileWriter fileWriter = new FileWriter(file, true);
 		try (PrintWriter printWriter = new PrintWriter(fileWriter)) {
 			sb.append(diretorio.getNome()+";");
+			sb.append(diretorio.getTotal()+";");
 			sb.append(String.format("%.2f",diretorio.getKb())+";");
 			sb.append(String.format("%.2f",diretorio.getMb())+";");
 			sb.append(String.format("%.2f",diretorio.getGb())+";");
 			sb.append(String.format("%.2f",diretorio.getKbNew())+";");
 			sb.append(String.format("%.2f",diretorio.getMbNew())+";");
 			sb.append(String.format("%.2f",diretorio.getGbNew())+";");
+			sb.append(sdf.format(diretorio.getInicio())+";");
+			sb.append(sdf.format(diretorio.getFim())+";");
 			printWriter.println(sb.toString());
 			printWriter.close();
 		} finally {

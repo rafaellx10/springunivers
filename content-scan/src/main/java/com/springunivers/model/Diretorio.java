@@ -1,6 +1,7 @@
 package com.springunivers.model;
 
 import java.io.File;
+import java.util.Date;
 
 public class Diretorio {
 	private Integer id;
@@ -11,7 +12,22 @@ public class Diretorio {
 	private double kbNew;
 	private double mbNew;
 	private double gbNew;
-	private File pasta;
+	private int total;
+	private File endereco;
+	private Date inicio;
+	private Date fim;
+	public Date getInicio() {
+		return inicio;
+	}
+	public void setInicio(Date inicio) {
+		this.inicio = inicio;
+	}
+	public void setFim(Date fim) {
+		this.fim = fim;
+	}
+	public Date getFim() {
+		return fim;
+	}
 	public Integer getId() {
 		return id;
 	}
@@ -22,10 +38,10 @@ public class Diretorio {
 		super();
 		this.id = id;
 		this.nome = nome;
-		this.pasta=new File(nome);
+		this.endereco=new File(nome);
 	}
-	public File getPasta() {
-		return pasta;
+	public File getEndereco() {
+		return endereco;
 	}
 	public double getKb() {
 		return kb;
@@ -63,5 +79,10 @@ public class Diretorio {
 	public void setGbNew(double gbNew) {
 		this.gbNew = gbNew;
 	}
-	
+	public int getTotal() {
+		return total;
+	}
+	public void setTotal(int total) {
+		this.total = total;
+	}
 }
