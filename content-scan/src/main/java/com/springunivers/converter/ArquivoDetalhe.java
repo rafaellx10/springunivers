@@ -1,6 +1,7 @@
 package com.springunivers.converter;
 
 import java.io.File;
+import java.math.BigDecimal;
 
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,41 +13,59 @@ public class ArquivoDetalhe {
 	@Autowired
 	@Qualifier("default")
 	private Tika defaultTika;
-	
+
+	public static int KB = 1024;
+	public static int MB = KB * 1024;
+	public static int GB = MB * 1024;
+
+	private double tamanho(long bytes, int unidade) {
+		return new BigDecimal(bytes).divide(new BigDecimal(unidade)).doubleValue();
+	}
+
+	public long Bytes(File arquivo) {
+		return arquivo.length();
+	}
+
+	public double Kbytes(long bytes) {
+		return tamanho(bytes, KB);
+	}
+
+	public double Mbytes(long bytes) {
+		return tamanho(bytes, MB);
+	}
+
+	public double Gbytes(long bytes) {
+		return tamanho(bytes, GB);
+	}
+
+	public String kilobytes(File arquivo) {
+		return kilobytes(arquivo.length());
+	}
+
+	public String kilobytes(long bytes) {
+		return Kbytes(bytes) + "Kb";
+	}
+
+	public String megabytes(File arquivo) {
+		return megabytes(arquivo.length());
+	}
+
+	public String megabytes(long bytes) {
+		return Mbytes(bytes) + "Mb";
+	}
+
+	public String gigabytes(File arquivo) {
+		return gigabytes(arquivo.length());
+	}
+
+	public String gigabytes(long bytes) {
+		return Gbytes(bytes) + "Gb";
+	}
+
 	public String extensaoOriginal(File arquivo) throws Exception {
 		return defaultTika.detect(arquivo);
 	}
 
-	public long bytes(File arquivo) {
-		return arquivo.length();
-	}
-
-	public long kilobytes(File arquivo) {
-		return bytes(arquivo) / 1024;
-	}
-
-	public long megabytes(File arquivo) {
-		return kilobytes(arquivo) / 1024;
-	}
-
-	public long gigabytes(File arquivo) {
-		return megabytes(arquivo) / 1024;
-	}
-
-	public long terabytes(File arquivo) {
-		return gigabytes(arquivo) / 1024;
-	}
-	
-	public String mb(File arquivo) {
-		return megabytes(arquivo) + "Mb";
-	}
-	public String gb(File arquivo) {
-		return gigabytes(arquivo) + "Gb";
-	}
-	public String kb(File arquivo) {
-		return kilobytes(arquivo) + "Kb";
-	}
-	
 	/*
 	 * public static void main(String[] args) { try { File file = new
 	 * File("C:\\tci\\img\\3130\\1.tif"); //
