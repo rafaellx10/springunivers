@@ -25,7 +25,7 @@ public class ContentScanPrograma {
 			FileReaderUtil fileReader = new FileReaderUtil();
 			List<String> scanDiretorios = fileReader.readLine(diretorios);
 			for(String diretorio: scanDiretorios) {
-				conversor.ajustarExtensaoArquivo(new File(diretorio));
+				conversor.converter(new File(diretorio));
 			}
 			LOGGER.info("fim");
 		} catch (Exception e) {

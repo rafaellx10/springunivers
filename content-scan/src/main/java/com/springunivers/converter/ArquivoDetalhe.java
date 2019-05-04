@@ -12,7 +12,7 @@ public class ArquivoDetalhe {
 	@Autowired
 	@Qualifier("default")
 	private Tika defaultTika;
-
+	
 	public String extensaoOriginal(File arquivo) throws Exception {
 		return defaultTika.detect(arquivo);
 	}
@@ -38,10 +38,13 @@ public class ArquivoDetalhe {
 	}
 	
 	public String mb(File arquivo) {
-		return megabytes(arquivo) + " Mb";
+		return megabytes(arquivo) + "Mb";
+	}
+	public String gb(File arquivo) {
+		return gigabytes(arquivo) + "Gb";
 	}
 	public String kb(File arquivo) {
-		return kilobytes(arquivo) + " Kb";
+		return kilobytes(arquivo) + "Kb";
 	}
 	
 	/*
