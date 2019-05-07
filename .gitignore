@@ -1,5 +1,8 @@
 # Arquivos
 *.class
+*.csv
+*.xls
+*.xlsx
 *.log
 *.jar
 *.war
