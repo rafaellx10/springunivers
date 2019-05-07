@@ -33,7 +33,7 @@ public class Conversor {
 	private ArquivoDetalhe detalhe;
 
 	public void converter(Diretorio diretorio) throws Exception {
-		if(diretorio.getEndereco().isDirectory()) {
+		if (diretorio.getEndereco().isDirectory()) {
 			diretorioVolume(diretorio, false);
 			String volume = String.format("%s %.2f (Kb) %.2f (Mb) %.2f (Gb) ", diretorio.getNome(), diretorio.getKb(),
 					diretorio.getMb(), diretorio.getGb());
@@ -44,34 +44,42 @@ public class Conversor {
 			for (File arquivo : arquivos) {
 				if (arquivo.isFile() && jpgJpegOriginal(arquivo)) {
 					String mb = detalhe.megabytes(arquivo);
+					String kb = detalhe.kilobytes(arquivo);
 					File jpg = getJpgFile(arquivo);
 					arquivo.renameTo(jpg);
 					String mbj = detalhe.megabytes(jpg);
-					LOGGER.info("O arquivo {} {} <FOI> convertido para {} {} ", arquivo.getName(), mb, jpg.getName(), mbj);
+					String kbj = detalhe.kilobytes(jpg);
+					LOGGER.info("O arquivo {} {} {} <FOI> convertido para {} {} {} ", arquivo.getName(), kb, mb,
+							jpg.getName(), kbj, mbj);
 					converterJpgToTif(jpg);
 					removerJpg(jpg);
 				} else {
-					LOGGER.info("O arquivo {} {} <POSSUI> a extensão adequada ", arquivo.getName(),
-							detalhe.megabytes(arquivo));
+					LOGGER.info("O arquivo {} {} {} <POSSUI> a extensão adequada ", arquivo.getName(),
+							detalhe.kilobytes(arquivo), detalhe.megabytes(arquivo));
 				}
 			}
-	
+
 			diretorioVolume(diretorio, true);
-			volume = String.format("%s %.2f (Kb) %.2f (Mb) %.2f (Gb) ", diretorio.getNome(), diretorio.getKbNew(),diretorio.getMbNew(), diretorio.getGbNew());
+			volume = String.format("%s %.2f (Kb) %.2f (Mb) %.2f (Gb) ", diretorio.getNome(), diretorio.getKbNew(),
+					diretorio.getMbNew(), diretorio.getGbNew());
 			diretorio.setFim(new Date());
 			csv(diretorio);
 			LOGGER.info("<FINALIZANDO> O processo de conversão do diretório: {} ", volume);
-		}else {
+		} else {
 			LOGGER.info("<ATENCAO> o endereco {} <NÃO É UM DIRETÓRIO> ", diretorio.getEndereco());
 		}
 
 	}
+
 	private void removerJpg(File jpg) {
-		if (jpg.delete()) {
-			LOGGER.info("O arquivo {} foi <REMOVIDO>", jpg);
-		} else
-			LOGGER.info("O arquivo {} <NÃO> foi <REMOVIDO>", jpg);
+		if (jpg.exists()) {
+			if (jpg.delete()) {
+				LOGGER.info("O arquivo {} foi <REMOVIDO>", jpg);
+			} else
+				LOGGER.info("O arquivo {} <NÃO> foi <REMOVIDO>", jpg);
+		}
 	}
+
 	private void diretorioVolume(Diretorio diretorio, boolean depois) {
 		long bytes = FileUtils.sizeOfDirectory(diretorio.getEndereco());
 		if (depois) {
@@ -87,55 +95,59 @@ public class Conversor {
 
 	private void converterJpgToTif(File jpg) throws Exception {
 		ImageWriter writer = null;
-		try {
-			File tif = getTifFile(jpg);
-			BufferedImage jpgBuffer = ImageIO.read(jpg);
-			if (tif.exists()) {
-				tif.delete();
+		if (jpg.exists()) {
+			try {
+				File tif = getTifFile(jpg);
+				BufferedImage jpgBuffer = ImageIO.read(jpg);
+				if (tif.exists()) {
+					tif.delete();
+				}
+				ImageOutputStream ios = null;
+				Iterator it = ImageIO.getImageWritersByFormatName("tiff");
+				if (it.hasNext()) {
+					writer = (ImageWriter) it.next();
+				}
+
+				ImageWriteParam writeParam = writer.getDefaultWriteParam();
+				writeParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+				writeParam.setCompressionType("JPEG");
+
+				ios = ImageIO.createImageOutputStream(tif);
+				writer.setOutput(ios);
+
+				IIOImage iioImage = new IIOImage(jpgBuffer, null, null);
+				writer.write(null, iioImage, writeParam);
+				LOGGER.info("O arquivo {} {} <CONVERTIDO> com sucesso!! ", tif.getName(), detalhe.megabytes(tif));
+			} finally {
+				writer.dispose();
+				writer = null;
 			}
-			ImageOutputStream ios = null;
-			Iterator it = ImageIO.getImageWritersByFormatName("tiff");
-			if (it.hasNext()) {
-				writer = (ImageWriter) it.next();
-			}
-
-			ImageWriteParam writeParam = writer.getDefaultWriteParam();
-			writeParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-			writeParam.setCompressionType("JPEG");
-
-			ios = ImageIO.createImageOutputStream(tif);
-			writer.setOutput(ios);
-
-			IIOImage iioImage = new IIOImage(jpgBuffer, null, null);
-			writer.write(null, iioImage, writeParam);
-			LOGGER.info("O arquivo {} {} <CONVERTIDO> com sucesso!! ", tif.getName(), detalhe.megabytes(tif));
-		} finally {
-			writer.dispose();
-			writer = null;
+		} else {
+			LOGGER.info("O arquivo {} <NÃO EXISTE> ou <NÃO FOI CONVERTIDO PELO PROCESSO ANTERIOR> ", jpg.getName());
 		}
-
 	}
+
 	private void csv(Diretorio diretorio) throws Exception {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
 		StringBuilder sb = new StringBuilder();
 		String resumo = new SimpleDateFormat("yyyyMMdd").format(new Date());
 		File file = new File(ContentScanPrograma.APP_PATH, "RESUMO_" + resumo + ".csv");
-		if(!file.exists()) {
+		if (!file.exists()) {
 			file.createNewFile();
 			sb.append("DIRETORIO;ARQUIVOS;KB;MB;GB;KB-ATUAL;MB-ATUAL;GB-ATUAL;INICIO;FIM\n");
 		}
 		FileWriter fileWriter = new FileWriter(file, true);
 		try (PrintWriter printWriter = new PrintWriter(fileWriter)) {
-			sb.append(diretorio.getNome()+";");
-			sb.append(diretorio.getTotal()+";");
-			sb.append(String.format("%.2f",diretorio.getKb())+";");
-			sb.append(String.format("%.2f",diretorio.getMb())+";");
-			sb.append(String.format("%.2f",diretorio.getGb())+";");
-			sb.append(String.format("%.2f",diretorio.getKbNew())+";");
-			sb.append(String.format("%.2f",diretorio.getMbNew())+";");
-			sb.append(String.format("%.2f",diretorio.getGbNew())+";");
-			sb.append(sdf.format(diretorio.getInicio())+";");
-			sb.append(sdf.format(diretorio.getFim())+";");
+			sb.append(diretorio.getNome() + ";");
+			sb.append(diretorio.getTotal() + ";");
+			sb.append(String.format("%.2f", diretorio.getKb()) + ";");
+			sb.append(String.format("%.2f", diretorio.getMb()) + ";");
+			sb.append(String.format("%.2f", diretorio.getGb()) + ";");
+			sb.append(String.format("%.2f", diretorio.getKbNew()) + ";");
+			sb.append(String.format("%.2f", diretorio.getMbNew()) + ";");
+			sb.append(String.format("%.2f", diretorio.getGbNew()) + ";");
+			sb.append(sdf.format(diretorio.getInicio()) + ";");
+			sb.append(sdf.format(diretorio.getFim()) + ";");
 			printWriter.println(sb.toString());
 			printWriter.close();
 		} finally {

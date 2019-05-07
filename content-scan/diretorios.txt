@@ -1,2 +1,2 @@
-C:\tci\img\3130
-C:\tci\img\3131
+C:\tci\3020
+C:\tci\3021
