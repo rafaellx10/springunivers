@@ -26,16 +26,16 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.tci.controller.Conversor;
+import com.tci.controller.Gerenciador;
 import com.tci.controller.DiretorioDetalhe;
-import com.tci.model.Diretorio;
+import com.tci.model.Arquivo;
 
 @Component
 public class Desktop extends JFrame {
 	public static List<String> logs = new ArrayList<String>();
 	private static final Logger LOGGER = LogManager.getLogger(Desktop.class);
 	@Autowired
-	private Conversor conversor;
+	private Gerenciador conversor;
 	@Autowired
 	private DiretorioDetalhe detalhe;
 	private JTextArea textDir = new JTextArea();
@@ -119,6 +119,11 @@ public class Desktop extends JFrame {
 		panel.add(pDiretorios, gbc_textArea);
 
 		panel.add(pAcoes, gbc_panel_1);
+		btnRemoverImagem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				removerImagens();
+			}
+		});
 		
 		
 		pAcoes.add(btnRemoverImagem);
@@ -176,8 +181,8 @@ public class Desktop extends JFrame {
 						String linha = linhas[i];
 						conversor.atualizarRepositorio(linha);
 					}
-					for(Diretorio diretorio: conversor.getRepositorio()) {
-						
+					for(Arquivo diretorio: conversor.getRepositorio()) {
+						conversor.removerImagens(diretorio);
 					}
 					LOGGER.info("FIM DO PROCESSO");
 				} catch (Exception e) {
@@ -203,7 +208,7 @@ public class Desktop extends JFrame {
 							procesando(true);
 							for (int i = 0; i < scanDiretorios.length; i++) {
 								String endereco = scanDiretorios[i];
-								textLogs.append(conversor.converter(new Diretorio(endereco)));
+								textLogs.append(conversor.converter(new Arquivo(endereco)));
 							}
 							LOGGER.info("FIM DO PROCESSO");
 						}

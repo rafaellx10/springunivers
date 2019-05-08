@@ -25,36 +25,91 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.tci.ContentTools;
-import com.tci.model.Diretorio;
+import com.tci.model.Arquivo;
 
 @Component
-public class Conversor {
-	private static final Logger LOGGER = LogManager.getLogger(Conversor.class);
+public class Gerenciador {
+	private static final Logger LOGGER = LogManager.getLogger(Gerenciador.class);
 	@Autowired
 	private ArquivoDetalhe detalhe;
-	private Map<String,Diretorio> repositorio;
+	private Map<String,Arquivo> repositorio;
+	private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+	private File csvImagemFile = new File(ContentTools.APP_PATH, "REMOVER_IMAGENS_RESUMO.csv");
 	
 	public void criarRepositorio() {
-		repositorio=new HashMap<String,Diretorio>();
+		repositorio=new HashMap<String,Arquivo>();
 	}
 	public void atualizarRepositorio(String linhaCsv) {
 		String[] campos = linhaCsv.split("\\;");
 		String nomeDir=campos[0];
 		String nomeImg = campos[1];
-		Diretorio diretorio=null;
+		Arquivo diretorio=null;
 		if((diretorio = repositorio.get(nomeDir))==null) {
-			diretorio = new Diretorio(nomeDir);
+			diretorio = new Arquivo(nomeDir);
 			repositorio.put(nomeDir, diretorio);
 		}
-		diretorio.addImagem(nomeImg);
+		diretorio.addImagem(new Arquivo(nomeImg));
 	}
-	public List<Diretorio> getRepositorio() {
-		return new ArrayList<Diretorio>(repositorio.values());
+	public List<Arquivo> getRepositorio() {
+		return new ArrayList<Arquivo>(repositorio.values());
 	}
-	public String removerImagens(Diretorio diretorio) {
+	public String removerImagens(Arquivo diretorio) throws Exception {
+		diretorioVolume(diretorio, false);
+		diretorio.setTotal(diretorio.getImagens().size());
+		removerImagem(diretorio);
 		return "";
 	}
-	public String converter(Diretorio diretorio) throws Exception {
+	private void removerImagem(Arquivo diretorio) throws Exception {
+		StringBuilder sb = new StringBuilder();
+		if (!csvImagemFile.exists()) {
+			csvImagemFile.createNewFile();
+			sb.append("DIRETORIO;TOTAL;IMAGEM;KB;MB;GB;KB-ATUAL;MB-ATUAL;GB-ATUAL;STATUS\n");
+		}
+		FileWriter fileWriter = new FileWriter(csvImagemFile, true);
+		try (PrintWriter printWriter = new PrintWriter(fileWriter)) {
+			sb.append(diretorio.getNome() + ";");
+			sb.append(diretorio.getTotal() + ";");
+			sb.append(" ;");
+			sb.append(String.format("%.2f", diretorio.getKb()) + ";");
+			sb.append(String.format("%.2f", diretorio.getMb()) + ";");
+			sb.append(String.format("%.2f", diretorio.getGb()) + ";");
+			sb.append("KbNew");
+			sb.append("MbNew");
+			sb.append("GbNew\n");
+			for(Arquivo imagem: diretorio.getImagens()) {
+				sb.append(removerImagem(diretorio, imagem));
+			}
+			diretorioVolume(diretorio, true);
+			String log= sb.toString();
+			log=log.replaceAll("KbNew", String.format("%.2f", diretorio.getKbNew()) + ";");
+			log=log.replaceAll("MbNew", String.format("%.2f", diretorio.getMbNew()) + ";");
+			log=log.replaceAll("GbNew", String.format("%.2f", diretorio.getGbNew()) + ";");
+			
+			printWriter.print(log);
+			printWriter.close();
+		} catch (Exception e) {
+			LOGGER.error("<ERRO REMOÇÃO IMAGEM> csvImagens do diretório: {} ", diretorio.getNome());
+			
+		} finally {
+			LOGGER.info("<RESUMO> csvImagens do diretório: {} ", diretorio.getNome());
+		}
+	}
+	private String removerImagem(Arquivo diretorio, Arquivo imagem) throws Exception {
+		StringBuilder sb = new StringBuilder();
+		File img = new File(diretorio.getEndereco(),imagem.getNome());
+		sb.append(" ; ;");
+		sb.append(imagem.getNome() + ";");
+		sb.append(String.format("%.2f", detalhe.Kbytes(img.length())) + ";");
+		sb.append(String.format("%.2f", detalhe.Mbytes(img.length())) + ";");
+		sb.append(String.format("%.2f", detalhe.Gbytes(img.length())) + ";");
+		sb.append(" ; ; ;");
+		boolean removida=false;
+		if(img.exists()) removida= img.delete();
+		sb.append((removida?"EXCLUIDA": "NAO EXCLUIDA")+ "\n");
+		
+		return sb.toString(); 
+	}
+	public String converter(Arquivo diretorio) throws Exception {
 		if (diretorio.getEndereco().isDirectory()) {
 			diretorioVolume(diretorio, false);
 			String volume = String.format("%s %.2f (Kb) %.2f (Mb) %.2f (Gb) ", diretorio.getNome(), diretorio.getKb(),
@@ -102,7 +157,7 @@ public class Conversor {
 		}
 	}
 
-	private void diretorioVolume(Diretorio diretorio, boolean depois) {
+	private void diretorioVolume(Arquivo diretorio, boolean depois) {
 		long bytes = FileUtils.sizeOfDirectory(diretorio.getEndereco());
 		if (depois) {
 			diretorio.setKbNew(detalhe.Kbytes(bytes));
@@ -149,7 +204,7 @@ public class Conversor {
 		}
 	}
 
-	private void csv(Diretorio diretorio) throws Exception {
+	private void csv(Arquivo diretorio) throws Exception {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
 		StringBuilder sb = new StringBuilder();
 		String resumo = new SimpleDateFormat("yyyyMMdd").format(new Date());
@@ -176,7 +231,7 @@ public class Conversor {
 			LOGGER.info("<RESUMO> csv do diretório: {} ", diretorio.getNome());
 		}
 	}
-
+	
 	private File getJpgFile(File tif) {
 		String nome = tif.getName().replaceAll("\\.tif$", ".jpg");
 		File jpeg = new File(tif.getParent(), nome);
@@ -194,26 +249,5 @@ public class Conversor {
 				|| detalhe.extensaoOriginal(arquivo).toLowerCase().contains("jpg");
 	}
 
-	/*
-	 * private void converterJpgToTif(File jpg) throws Exception { ImageWriter
-	 * writer = null; try { File tiffFile = getTifFile(jpg); BufferedImage jpgBuffer
-	 * = ImageIO.read(jpg); if (tiffFile.exists()) { tiffFile.delete(); }
-	 * ImageOutputStream ios = null; Iterator it =
-	 * ImageIO.getImageWritersByFormatName("tiff"); if (it.hasNext()) { writer =
-	 * (ImageWriter) it.next(); }
-	 * 
-	 * ImageWriteParam writeParam = writer.getDefaultWriteParam();
-	 * writeParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-	 * writeParam.setCompressionType("JPEG");
-	 * 
-	 * ios = ImageIO.createImageOutputStream(tiffFile); writer.setOutput(ios);
-	 * 
-	 * IIOImage iioImage = new IIOImage(jpgBuffer, null, null); writer.write(null,
-	 * iioImage, writeParam);
-	 * LOGGER.info("O arquivo {} {} <FINALIZADO> com sucesso!! ", jpg.getName(),
-	 * detalhe.kb(jpg)); } finally { writer.dispose(); writer = null; }
-	 * 
-	 * }
-	 */
 
 }
