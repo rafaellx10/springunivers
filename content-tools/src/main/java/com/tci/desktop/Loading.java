@@ -7,12 +7,12 @@ import java.awt.Color;
 import java.awt.Font;
 
 public class Loading extends JPanel {
-	private JLabel img;
+	private JLabel img=new JLabel("CONTENT");
 	private JLabel text = new JLabel("PROCESSANDO ... ");
 	public Loading() {
 		text.setFont(new Font("Tahoma", Font.BOLD, 13));
 		text.setForeground(Color.BLUE);
-		setImg("loading.gif");
+		//setImg("loading.gif");
 		add(img);
 		add(text);
 		ocultar();

@@ -182,8 +182,9 @@ public class Desktop extends JFrame {
 						conversor.atualizarRepositorio(linha);
 					}
 					for(Arquivo diretorio: conversor.getRepositorio()) {
-						conversor.removerImagens(diretorio);
+						textLogs.append(conversor.removerImagens(diretorio));
 					}
+					textLogs.append("\nFINALIZADO");
 					LOGGER.info("FIM DO PROCESSO");
 				} catch (Exception e) {
 					e.printStackTrace();

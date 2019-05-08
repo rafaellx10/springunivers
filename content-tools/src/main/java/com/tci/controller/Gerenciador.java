@@ -57,7 +57,7 @@ public class Gerenciador {
 		diretorioVolume(diretorio, false);
 		diretorio.setTotal(diretorio.getImagens().size());
 		removerImagem(diretorio);
-		return "";
+		return diretorio.getNome() + " --> Removendo imagens\n";
 	}
 	private void removerImagem(Arquivo diretorio) throws Exception {
 		StringBuilder sb = new StringBuilder();
@@ -70,9 +70,9 @@ public class Gerenciador {
 			sb.append(diretorio.getNome() + ";");
 			sb.append(diretorio.getTotal() + ";");
 			sb.append(" ;");
-			sb.append(String.format("%.2f", diretorio.getKb()) + ";");
-			sb.append(String.format("%.2f", diretorio.getMb()) + ";");
-			sb.append(String.format("%.2f", diretorio.getGb()) + ";");
+			sb.append(String.format("%.3f", diretorio.getKb()) + ";");
+			sb.append(String.format("%.3f", diretorio.getMb()) + ";");
+			sb.append(String.format("%.3f", diretorio.getGb()) + ";");
 			sb.append("KbNew");
 			sb.append("MbNew");
 			sb.append("GbNew\n");
@@ -81,9 +81,9 @@ public class Gerenciador {
 			}
 			diretorioVolume(diretorio, true);
 			String log= sb.toString();
-			log=log.replaceAll("KbNew", String.format("%.2f", diretorio.getKbNew()) + ";");
-			log=log.replaceAll("MbNew", String.format("%.2f", diretorio.getMbNew()) + ";");
-			log=log.replaceAll("GbNew", String.format("%.2f", diretorio.getGbNew()) + ";");
+			log=log.replaceAll("KbNew", String.format("%.3f", diretorio.getKbNew()) + ";");
+			log=log.replaceAll("MbNew", String.format("%.3f", diretorio.getMbNew()) + ";");
+			log=log.replaceAll("GbNew", String.format("%.3f", diretorio.getGbNew()) + ";");
 			
 			printWriter.print(log);
 			printWriter.close();
@@ -99,9 +99,9 @@ public class Gerenciador {
 		File img = new File(diretorio.getEndereco(),imagem.getNome());
 		sb.append(" ; ;");
 		sb.append(imagem.getNome() + ";");
-		sb.append(String.format("%.2f", detalhe.Kbytes(img.length())) + ";");
-		sb.append(String.format("%.2f", detalhe.Mbytes(img.length())) + ";");
-		sb.append(String.format("%.2f", detalhe.Gbytes(img.length())) + ";");
+		sb.append(String.format("%.3f", detalhe.Kbytes(img.length())) + ";");
+		sb.append(String.format("%.3f", detalhe.Mbytes(img.length())) + ";");
+		sb.append(String.format("%.3f", detalhe.Gbytes(img.length())) + ";");
 		sb.append(" ; ; ;");
 		boolean removida=false;
 		if(img.exists()) removida= img.delete();
