@@ -2,6 +2,7 @@ package com.tci.desktop;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -17,7 +18,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 
@@ -41,13 +41,16 @@ public class Desktop extends JFrame {
 	private JTextArea textDir = new JTextArea();
 	private JTextArea textLogs = new JTextArea();
 	private JButton btnConverter = new JButton("Converter");
-	private JButton btnValidaOcr = new JButton("Valida OCR");
+	private JButton btnValidaOcr = new JButton("Validar OCR");
+	private JButton btnRemoverImagem = new JButton("Remover Imagem");
 	private Loading loding=new Loading();
 	public Desktop() {
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		getContentPane().add(tabbedPane, BorderLayout.CENTER);
 
 		JPanel pAcoes = new JPanel();
+		FlowLayout flowLayout = (FlowLayout) pAcoes.getLayout();
+		flowLayout.setAlignment(FlowLayout.LEFT);
 		pAcoes.setBorder(new TitledBorder(null, "A\u00E7\u00F5es", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 
 		JPanel pDiretorios = new JPanel();
@@ -92,8 +95,6 @@ public class Desktop extends JFrame {
 				converter();
 			}
 		});
-		
-		pAcoes.add(loding);
 		pAcoes.add(btnConverter);
 
 		btnValidaOcr.addActionListener(new ActionListener() {
@@ -118,6 +119,11 @@ public class Desktop extends JFrame {
 		panel.add(pDiretorios, gbc_textArea);
 
 		panel.add(pAcoes, gbc_panel_1);
+		
+		
+		pAcoes.add(btnRemoverImagem);
+		
+		pAcoes.add(loding);
 		pLog.setLayout(new BorderLayout(0, 0));
 
 		pLog.add(scrollLogs);
@@ -157,7 +163,33 @@ public class Desktop extends JFrame {
 		}).start();
 
 	}
+	private void removerImagens() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					textLogs.setText("");
+					procesando(true);
+					String[] linhas = textDir.getText().split("\\n");
+					conversor.criarRepositorio();
+					for (int i = 0; i < linhas.length; i++) {
+						String linha = linhas[i];
+						conversor.atualizarRepositorio(linha);
+					}
+					for(Diretorio diretorio: conversor.getRepositorio()) {
+						
+					}
+					LOGGER.info("FIM DO PROCESSO");
+				} catch (Exception e) {
+					e.printStackTrace();
+					LOGGER.error(e.getMessage());
+				}finally {
+					procesando(false);
+				}
 
+			}
+		}).start();
+	}
 	private void converter() {
 		new Thread(new Runnable() {
 			@Override
@@ -170,8 +202,8 @@ public class Desktop extends JFrame {
 							String[] scanDiretorios = textDir.getText().split("\\n");
 							procesando(true);
 							for (int i = 0; i < scanDiretorios.length; i++) {
-								String diretorio = scanDiretorios[i];
-								textLogs.append(conversor.converter(new Diretorio(i, diretorio)));
+								String endereco = scanDiretorios[i];
+								textLogs.append(conversor.converter(new Diretorio(endereco)));
 							}
 							LOGGER.info("FIM DO PROCESSO");
 						}

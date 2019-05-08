@@ -5,8 +5,12 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -28,7 +32,28 @@ public class Conversor {
 	private static final Logger LOGGER = LogManager.getLogger(Conversor.class);
 	@Autowired
 	private ArquivoDetalhe detalhe;
-
+	private Map<String,Diretorio> repositorio;
+	
+	public void criarRepositorio() {
+		repositorio=new HashMap<String,Diretorio>();
+	}
+	public void atualizarRepositorio(String linhaCsv) {
+		String[] campos = linhaCsv.split("\\;");
+		String nomeDir=campos[0];
+		String nomeImg = campos[1];
+		Diretorio diretorio=null;
+		if((diretorio = repositorio.get(nomeDir))==null) {
+			diretorio = new Diretorio(nomeDir);
+			repositorio.put(nomeDir, diretorio);
+		}
+		diretorio.addImagem(nomeImg);
+	}
+	public List<Diretorio> getRepositorio() {
+		return new ArrayList<Diretorio>(repositorio.values());
+	}
+	public String removerImagens(Diretorio diretorio) {
+		return "";
+	}
 	public String converter(Diretorio diretorio) throws Exception {
 		if (diretorio.getEndereco().isDirectory()) {
 			diretorioVolume(diretorio, false);

@@ -1,10 +1,11 @@
 package com.tci.model;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Diretorio {
-	private Integer id;
 	private String nome;
 	private double kb;
 	private double mb;
@@ -16,6 +17,13 @@ public class Diretorio {
 	private File endereco;
 	private Date inicio;
 	private Date fim;
+	private List<String> imagens;
+	public List<String> getImagens() {
+		return imagens;
+	}
+	public void addImagem(String imagem) {
+		imagens.add(imagem);
+	}
 	public Date getInicio() {
 		return inicio;
 	}
@@ -28,17 +36,14 @@ public class Diretorio {
 	public Date getFim() {
 		return fim;
 	}
-	public Integer getId() {
-		return id;
-	}
 	public String getNome() {
 		return nome;
 	}
-	public Diretorio(Integer id, String nome) {
+	public Diretorio(String nome) {
 		super();
-		this.id = id;
 		this.nome = nome;
 		this.endereco=new File(nome);
+		this.imagens = new ArrayList<String>();
 	}
 	public File getEndereco() {
 		return endereco;
@@ -85,4 +90,28 @@ public class Diretorio {
 	public void setTotal(int total) {
 		this.total = total;
 	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((nome == null) ? 0 : nome.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Diretorio other = (Diretorio) obj;
+		if (nome == null) {
+			if (other.nome != null)
+				return false;
+		} else if (!nome.equals(other.nome))
+			return false;
+		return true;
+	}
+	
 }
