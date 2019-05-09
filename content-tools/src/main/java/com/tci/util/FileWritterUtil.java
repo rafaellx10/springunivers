@@ -16,7 +16,7 @@ public class FileWritterUtil {
 		FileWriter fileWriter = new FileWriter(file, true);
 		try (PrintWriter printWriter = new PrintWriter(fileWriter)) {
 			if(cabecalho!=null)
-				printWriter.print(cabecalho);
+				printWriter.print(cabecalho+"\n");
 			printWriter.print(conteudo);
 			printWriter.close();
 		}

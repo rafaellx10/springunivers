@@ -132,8 +132,6 @@ public class Desktop extends JFrame {
 		
 		
 		pAcoes.add(btnRemoverImagem);
-		
-		pAcoes.add(loding);
 		btnCsvXDiretorio.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				csvVersusDiretorio();
@@ -142,6 +140,8 @@ public class Desktop extends JFrame {
 		
 		
 		pAcoes.add(btnCsvXDiretorio);
+		
+		pAcoes.add(loding);
 		pLog.setLayout(new BorderLayout(0, 0));
 
 		pLog.add(scrollLogs);

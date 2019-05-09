@@ -12,10 +12,17 @@ public class DiretorioDetalhe {
 		return scan ;
 	}
 	public String csvVersusDiretorio(String diretorio, String imagem) {
-		File img = new File(diretorio,imagem); 
-		boolean existDir=img.exists();
-		String linha = img.getAbsolutePath()+";" + (existDir?"S":"N") + ";|N|";
-		linha=linha.replace("|N|", dirVersusCsv(diretorio, imagem));
+		String[] split =imagem.split("\\|");
+		String linha="";
+		if(split.length >1) {
+			imagem =split[split.length-1];
+			if(imagem.contains("pdf")) {
+				File img = new File(diretorio,imagem); 
+				boolean existDir=img.exists();
+				linha = img.getAbsolutePath()+";" + (existDir?"S":"N") + ";|N|";
+				linha=linha.replace("|N|", dirVersusCsv(diretorio, imagem));
+			}
+		}
 		return linha;
 	}
 	public String dirVersusCsv(String diretorio, String imagem) {
