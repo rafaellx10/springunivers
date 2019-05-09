@@ -1,10 +1,12 @@
 package com.tci.desktop;
 
-import javax.swing.JPanel;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import java.awt.Color;
 import java.awt.Font;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import com.tci.util.Imagem;
 
 public class Loading extends JPanel {
 	private JLabel img=new JLabel("CONTENT");
@@ -12,15 +14,13 @@ public class Loading extends JPanel {
 	public Loading() {
 		text.setFont(new Font("Tahoma", Font.BOLD, 13));
 		text.setForeground(Color.BLUE);
-		//setImg("loading.gif");
+		img = new JLabel(Imagem.gif("loading"));
 		add(img);
 		add(text);
 		ocultar();
 	}
-	private void setImg(String imagem) {
-		//ImageIcon icon= new ImageIcon(ClassLoader.getSystemClassLoader().getResource("loading.jpg"));
-		ImageIcon icon= new ImageIcon(ClassLoader.getSystemClassLoader().getResource(imagem));
-    	img = new JLabel(icon);
+	private void setGif(String gif) {
+		img = new JLabel(Imagem.gif(gif));
 	}
 	public void ocultar() {
 		exibir(false);

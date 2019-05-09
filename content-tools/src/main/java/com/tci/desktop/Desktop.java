@@ -29,6 +29,8 @@ import org.springframework.stereotype.Component;
 import com.tci.controller.Gerenciador;
 import com.tci.controller.DiretorioDetalhe;
 import com.tci.model.Arquivo;
+import com.tci.util.FileWritterUtil;
+import java.awt.Font;
 
 @Component
 public class Desktop extends JFrame {
@@ -43,6 +45,7 @@ public class Desktop extends JFrame {
 	private JButton btnConverter = new JButton("Converter");
 	private JButton btnValidaOcr = new JButton("Validar OCR");
 	private JButton btnRemoverImagem = new JButton("Remover Imagem");
+	private JButton btnCsvXDiretorio = new JButton("Csv X Diretorio");
 	private Loading loding=new Loading();
 	public Desktop() {
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
@@ -74,12 +77,14 @@ public class Desktop extends JFrame {
 		gbc_textArea.fill = GridBagConstraints.BOTH;
 		gbc_textArea.gridx = 0;
 		gbc_textArea.gridy = 0;
+		textDir.setFont(new Font("Arial", Font.PLAIN, 12));
 
 		textDir.setLineWrap(true);
 		textDir.setWrapStyleWord(true);
 
 		textLogs.setLineWrap(true);
 		textLogs.setWrapStyleWord(true);
+		textLogs.setFont(new Font("Arial", Font.PLAIN, 12));
 
 		JScrollPane scrollDir = new JScrollPane();
 		scrollDir.setViewportView(textDir);
@@ -129,19 +134,59 @@ public class Desktop extends JFrame {
 		pAcoes.add(btnRemoverImagem);
 		
 		pAcoes.add(loding);
+		btnCsvXDiretorio.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				csvVersusDiretorio();
+			}
+		});
+		
+		
+		pAcoes.add(btnCsvXDiretorio);
 		pLog.setLayout(new BorderLayout(0, 0));
 
 		pLog.add(scrollLogs);
 		panel.add(pLog, gbc_scrollLogs);
 
 	}
-	private static Aguarde LOADING;
 	private void procesando(boolean processando) {
 		btnConverter.setEnabled(!processando);
 		btnValidaOcr.setEnabled(!processando);
+		btnRemoverImagem.setEnabled(!processando);
+		btnCsvXDiretorio.setEnabled(!processando);
 		loding.exibir(processando);
+		if(!processando) {
+			JOptionPane.showMessageDialog(null, "PROCESSO FINALIZADO");
+		}
 	}
 
+	private void csvVersusDiretorio() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					String diretorio = JOptionPane.showInputDialog( "Informe o diretorio" );
+					textLogs.setText("");
+					procesando(true);
+					String[] imagens = textDir.getText().split("\\n");
+					for (int i = 0; i < imagens.length; i++) {
+						String var = imagens[i];
+						var = detalhe.csvVersusDiretorio(diretorio, var);
+						if(var!=null && var.trim().length() >0)
+							textLogs.append(var + "\n");
+					}
+					new FileWritterUtil().writer("CSV_X_DIRETORIO.csv","IMAGEM;DIRETORIO;CSV", textLogs.getText().toString());
+					LOGGER.info("FIM DO PROCESSO");
+				} catch (Exception e) {
+					e.printStackTrace();
+					LOGGER.error(e.getMessage());
+				}finally {
+					procesando(false);
+				}
+
+			}
+		}).start();
+		
+	}
 	private void validarOcr() {
 		new Thread(new Runnable() {
 			@Override
@@ -151,11 +196,12 @@ public class Desktop extends JFrame {
 					procesando(true);
 					String[] scanDiretorios = textDir.getText().split("\\n");
 					for (int i = 0; i < scanDiretorios.length; i++) {
-						String temp = scanDiretorios[i];
-						temp = detalhe.contemOcrZip(temp);
-						if(temp!=null && temp.trim().length() >0)
-							textLogs.append(temp + "\n");
+						String var = scanDiretorios[i];
+						var = detalhe.contemOcrZip(var);
+						if(var!=null && var.trim().length() >0)
+							textLogs.append(var + "\n");
 					}
+					new FileWritterUtil().writer("OCR_SCAN.csv", textLogs.getText().toString());
 					LOGGER.info("FIM DO PROCESSO");
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -230,7 +276,7 @@ public class Desktop extends JFrame {
 	}
 
 	public void exibir() {
-		setSize(600, 600);
+		setSize(700, 700);
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
