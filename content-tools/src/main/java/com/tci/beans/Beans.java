@@ -5,6 +5,7 @@ import org.apache.tika.detect.TypeDetector;
 import org.apache.tika.mime.MimeTypes;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class Beans {
@@ -19,5 +20,10 @@ public class Beans {
 	@Bean(name = "type")
 	public Tika typeTika() {
 		return new Tika(new TypeDetector());
+	}
+	@Bean
+	public RestTemplate restTemplate() {
+		RestTemplate restTemplate = new RestTemplate();
+		return restTemplate;
 	}
 }

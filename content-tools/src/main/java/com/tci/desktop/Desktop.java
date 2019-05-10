@@ -8,7 +8,10 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -27,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.tci.controller.Gerenciador;
+import com.tci.controller.OcrProcessClient;
 import com.tci.controller.DiretorioDetalhe;
 import com.tci.model.Arquivo;
 import com.tci.util.FileWritterUtil;
@@ -40,6 +44,8 @@ public class Desktop extends JFrame {
 	private Gerenciador conversor;
 	@Autowired
 	private DiretorioDetalhe detalhe;
+	@Autowired
+	private OcrProcessClient client;
 	private JTextArea textDir = new JTextArea();
 	private JTextArea textLogs = new JTextArea();
 	private JButton btnConverter = new JButton("Converter");
@@ -47,6 +53,7 @@ public class Desktop extends JFrame {
 	private JButton btnRemoverImagem = new JButton("Remover Imagem");
 	private JButton btnCsvXDiretorio = new JButton("Csv X Diretorio");
 	private Loading loding=new Loading();
+	private final JButton btnGerarOcr = new JButton("Gerar OCR");
 	public Desktop() {
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		getContentPane().add(tabbedPane, BorderLayout.CENTER);
@@ -140,6 +147,13 @@ public class Desktop extends JFrame {
 		
 		
 		pAcoes.add(btnCsvXDiretorio);
+		btnGerarOcr.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				gerarOcr();
+			}
+		});
+		
+		pAcoes.add(btnGerarOcr);
 		
 		pAcoes.add(loding);
 		pLog.setLayout(new BorderLayout(0, 0));
@@ -158,7 +172,30 @@ public class Desktop extends JFrame {
 			JOptionPane.showMessageDialog(null, "PROCESSO FINALIZADO");
 		}
 	}
+	private void gerarOcr() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					textLogs.setText("");
+					procesando(true);
+					String[] diretorios = textDir.getText().split("\\n");
+					for (int i = 0; i < diretorios.length; i++) {
+						String diretorio = diretorios[i];
+						client.gerarOcr(diretorio);
+					}
+					//new FileWritterUtil().writer("OCR_SCAN.csv", textLogs.getText().toString());
+					LOGGER.info("FIM DO PROCESSO DE GERAÇÃO DE OCR");
+				} catch (Exception e) {
+					e.printStackTrace();
+					LOGGER.error(e.getMessage());
+				}finally {
+					procesando(false);
+				}
 
+			}
+		}).start();
+	}
 	private void csvVersusDiretorio() {
 		new Thread(new Runnable() {
 			@Override
@@ -168,11 +205,26 @@ public class Desktop extends JFrame {
 					textLogs.setText("");
 					procesando(true);
 					String[] imagens = textDir.getText().split("\\n");
+					List<String> nomes = new ArrayList<String>();
 					for (int i = 0; i < imagens.length; i++) {
-						String var = imagens[i];
-						var = detalhe.csvVersusDiretorio(diretorio, var);
-						if(var!=null && var.trim().length() >0)
-							textLogs.append(var + "\n");
+						String imagem = imagens[i];
+						String[] split =imagem.split("\\|");
+						imagem =split[split.length-1];
+						if(imagem!=null && imagem.length() > 0 && imagem.contains("pdf")) {
+							textLogs.append(detalhe.csvVersusDiretorio(diretorio, imagem) +"\n");
+							nomes.add(imagem);
+						}
+					}
+					Collections.sort(nomes);
+					List<String>csvImagens = Arrays.asList(new File(diretorio).list());
+					Collections.sort(csvImagens);
+					for (String img: csvImagens) {
+						boolean exists = false;
+						for(String nome: nomes) {
+							if(exists=nome.equals(img))
+								break;
+						}
+						textLogs.append(diretorio+"\\"+img +"; ;" + (exists?"S":"N") + "\n");
 					}
 					new FileWritterUtil().writer("CSV_X_DIRETORIO.csv","IMAGEM;DIRETORIO;CSV", textLogs.getText().toString());
 					LOGGER.info("FIM DO PROCESSO");
