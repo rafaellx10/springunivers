@@ -167,6 +167,7 @@ public class Desktop extends JFrame {
 		btnValidaOcr.setEnabled(!processando);
 		btnRemoverImagem.setEnabled(!processando);
 		btnCsvXDiretorio.setEnabled(!processando);
+		btnGerarOcr.setEnabled(!processando);
 		loding.exibir(processando);
 		if(!processando) {
 			JOptionPane.showMessageDialog(null, "PROCESSO FINALIZADO");
@@ -182,9 +183,14 @@ public class Desktop extends JFrame {
 					String[] diretorios = textDir.getText().split("\\n");
 					for (int i = 0; i < diretorios.length; i++) {
 						String diretorio = diretorios[i];
+						String log="\n<PROCESSANDO OCR> do diretório " + diretorio;
+						textLogs.append(log);
+						LOGGER.info(log);
 						client.gerarOcr(diretorio);
+						log="\n<FIM PROCESSO OCR> do diretório " + diretorio;
+						textLogs.append(log);
+						LOGGER.info(log);
 					}
-					//new FileWritterUtil().writer("OCR_SCAN.csv", textLogs.getText().toString());
 					LOGGER.info("FIM DO PROCESSO DE GERAÇÃO DE OCR");
 				} catch (Exception e) {
 					e.printStackTrace();

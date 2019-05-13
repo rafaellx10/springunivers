@@ -16,6 +16,7 @@ public class DiretorioDetalhe {
 		if(ocr.exists() && ocr.length()==0) {
 			ocr.delete();
 			LOGGER.warn("<REMOVENDO OCR> " + ocr.getAbsolutePath() + " " + ocr.length() + "Kb");
+			scan=scan + "\n" + "<REMOVENDO OCR> " + ocr.getAbsolutePath() + " " + ocr.length() + "Kb";
 		}
 		return scan ;
 	}
