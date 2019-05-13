@@ -194,10 +194,11 @@ public class Desktop extends JFrame {
 						String[] diretorios = textDir.getText().split("\\n");
 						for (int i = 0; i < diretorios.length; i++) {
 							String diretorio = diretorios[i];
-							String log="\n<GERANDO OCR.zip> do diretório " + diretorio;
+							String log="<GERANDO OCR.zip> do diretório " + diretorio;
 							textLogs.append(log);
 							LOGGER.info(log);
-							log="\n<FIM GERAÇÃO OCR.zip> do diretório " + diretorio;
+							conversor.gerarOcrZip(diretorio);
+							log="\n<FIM GERAÇÃO OCR.zip> do diretório " + diretorio + "\n";
 							textLogs.append(log);
 							LOGGER.info(log);
 						}
@@ -226,11 +227,11 @@ public class Desktop extends JFrame {
 						String[] diretorios = textDir.getText().split("\\n");
 						for (int i = 0; i < diretorios.length; i++) {
 							String diretorio = diretorios[i];
-							String log="\n<PROCESSANDO OCR> do diretório " + diretorio;
+							String log="<PROCESSANDO GERAÇÃO txt e hocr> do diretório " + diretorio;
 							textLogs.append(log);
 							LOGGER.info(log);
 							client.gerarTxtHocr(diretorio);
-							log="\n<FIM PROCESSO OCR> do diretório " + diretorio;
+							log="\n<FIM PROCESSO GERAÇÃO txt e hocr> do diretório " + diretorio+"\n";
 							textLogs.append(log);
 							LOGGER.info(log);
 						}

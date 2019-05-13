@@ -2,15 +2,20 @@ package com.tci.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -245,9 +250,38 @@ public class Gerenciador {
 	}
 
 	public boolean jpgJpegOriginal(File arquivo) throws Exception {
-		return detalhe.extensaoOriginal(arquivo).toLowerCase().contains("jpeg")
-				|| detalhe.extensaoOriginal(arquivo).toLowerCase().contains("jpg");
+		return detalhe.tipoConteudo(arquivo).toLowerCase().contains("jpeg")
+				|| detalhe.tipoConteudo(arquivo).toLowerCase().contains("jpg");
 	}
-
-
+	
+	public void gerarOcrZip(String diretorio) throws Exception {
+		File dir = new File(diretorio);
+		File[] files = dir.listFiles();
+        FileOutputStream fos = new FileOutputStream(new File(dir, "OCR.zip"));
+        ZipOutputStream zipOut = new ZipOutputStream(fos);
+        for (File file : files) {
+        	if(file.getName().contains(".hocr")) {
+	            FileInputStream fis = new FileInputStream(file);
+	            ZipEntry zipEntry = new ZipEntry(file.getName());
+	            zipOut.putNextEntry(zipEntry); 
+	            byte[] bytes = new byte[1024];
+	            int length;
+	            while((length = fis.read(bytes)) >= 0) {
+	                zipOut.write(bytes, 0, length);
+	            }
+	            fis.close();
+        	}
+        }
+        zipOut.close();
+        fos.close();
+        for (File file : files) {
+        	if(file.getName().contains(".hocr")) {
+        		if(file.exists())
+        			file.delete();
+        	}
+        }
+	}
+	public void removerArquivos(String diretorio, String extensao) {
+		
+	}
 }

@@ -31,7 +31,7 @@ public class OcrProcessClient {
 		try {
 			for (String tif : tifs) {
 				File img = new File(diretorio, tif);
-				extensao = detalhe.extensaoOriginal(img);
+				extensao = detalhe.tipoConteudo(img);
 				if (extensao.contains("tif") || extensao.contains("tiff")) {
 					LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 					map.add("path", img.getAbsolutePath());
