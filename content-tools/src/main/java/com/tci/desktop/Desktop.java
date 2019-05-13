@@ -216,6 +216,8 @@ public class Desktop extends JFrame {
 		}).start();
 	}
 	private void gerarTxtHocr() {
+		//log=\\BPOCSCOCR05\logs$\DNIT-DF
+		//\\172.20.0.15\f$\Data\Shares\Projetos\dnit_df\tcibpo-bureau-itinerante-dnit2\2018\09\05\2785
 		new Thread(new Runnable() {
 			@Override
 			public void run() {

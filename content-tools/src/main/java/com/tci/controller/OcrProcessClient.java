@@ -3,6 +3,7 @@ package com.tci.controller;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,8 +39,10 @@ public class OcrProcessClient {
 					map.add("buscaTextual", "true");
 					map.add("pDFPesquisavel", "true");
 					HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new HttpEntity<>(map);
-
-					ResponseEntity<String> result = client.exchange("http://localhost:8080/gera-arquivos",
+					String porta = Objects.toString(System.getProperty("ocr-processoor-port"),"8080");
+					String url="http://localhost:"+porta+"/gera-arquivos";
+					LOGGER.info("URL OCR PROCESSOR " + url);
+					ResponseEntity<String> result = client.exchange(url,
 							HttpMethod.POST, requestEntity, String.class);
 					if (result.getStatusCode().equals(HttpStatus.OK)) {
 						LOGGER.info(String.format("Arquivos da imagem %s gerados com sucesso", img.getAbsolutePath()));

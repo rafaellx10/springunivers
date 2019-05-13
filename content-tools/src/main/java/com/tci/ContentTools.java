@@ -16,6 +16,7 @@ public class ContentTools {
 	public static final String APP_PATH = System.getProperty("user.dir");
 	private static ConfigurableApplicationContext contexto;
 	public static void main(String[] args) {
+		System.out.println("PORTA OCR PROCESSOR (ocr-processoor-port):" + System.getProperty("ocr-processoor-port"));
 		System.setProperty("app.path", APP_PATH);
 		try {
 			String lf = UIManager.getSystemLookAndFeelClassName();
