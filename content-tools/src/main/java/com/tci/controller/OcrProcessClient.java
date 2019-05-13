@@ -25,7 +25,7 @@ public class OcrProcessClient {
 	@Autowired
 	private ArquivoDetalhe detalhe;
 
-	public void gerarOcr(String diretorio) {
+	public void gerarTxtHocr(String diretorio) {
 		List<String> tifs = Arrays.asList(new File(diretorio).list());
 		String extensao = "image/tiff";
 		try {

@@ -53,7 +53,8 @@ public class Desktop extends JFrame {
 	private JButton btnRemoverImagem = new JButton("Remover Imagem");
 	private JButton btnCsvXDiretorio = new JButton("Csv X Diretorio");
 	private Loading loding=new Loading();
-	private final JButton btnGerarOcr = new JButton("Gerar OCR");
+	private JButton btnGerarTxtHocr = new JButton("Gerar TXT e HOCR");
+	private JButton btnGerarOcrzip = new JButton("Gerar OCR.zip");
 	public Desktop() {
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		getContentPane().add(tabbedPane, BorderLayout.CENTER);
@@ -147,13 +148,20 @@ public class Desktop extends JFrame {
 		
 		
 		pAcoes.add(btnCsvXDiretorio);
-		btnGerarOcr.addActionListener(new ActionListener() {
+		btnGerarTxtHocr.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				gerarOcr();
+				gerarTxtHocr();
 			}
 		});
 		
-		pAcoes.add(btnGerarOcr);
+		pAcoes.add(btnGerarTxtHocr);
+		btnGerarOcrzip.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				gerarOcrZip();
+			}
+		});
+		
+		pAcoes.add(btnGerarOcrzip);
 		
 		pAcoes.add(loding);
 		pLog.setLayout(new BorderLayout(0, 0));
@@ -167,31 +175,68 @@ public class Desktop extends JFrame {
 		btnValidaOcr.setEnabled(!processando);
 		btnRemoverImagem.setEnabled(!processando);
 		btnCsvXDiretorio.setEnabled(!processando);
-		btnGerarOcr.setEnabled(!processando);
+		btnGerarTxtHocr.setEnabled(!processando);
+		btnGerarOcrzip.setEnabled(!processando);
 		loding.exibir(processando);
 		if(!processando) {
 			JOptionPane.showMessageDialog(null, "PROCESSO FINALIZADO");
 		}
 	}
-	private void gerarOcr() {
+	private void gerarOcrZip() {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
 					textLogs.setText("");
-					procesando(true);
-					String[] diretorios = textDir.getText().split("\\n");
-					for (int i = 0; i < diretorios.length; i++) {
-						String diretorio = diretorios[i];
-						String log="\n<PROCESSANDO OCR> do diretório " + diretorio;
-						textLogs.append(log);
-						LOGGER.info(log);
-						client.gerarOcr(diretorio);
-						log="\n<FIM PROCESSO OCR> do diretório " + diretorio;
-						textLogs.append(log);
-						LOGGER.info(log);
+					if (JOptionPane.showConfirmDialog(null, "Esta rotina vai compactar os arquivos .hocr dentro do OCR.zip, deseja prosseguir?",
+							"ALERTA", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+						procesando(true);
+						String[] diretorios = textDir.getText().split("\\n");
+						for (int i = 0; i < diretorios.length; i++) {
+							String diretorio = diretorios[i];
+							String log="\n<GERANDO OCR.zip> do diretório " + diretorio;
+							textLogs.append(log);
+							LOGGER.info(log);
+							log="\n<FIM GERAÇÃO OCR.zip> do diretório " + diretorio;
+							textLogs.append(log);
+							LOGGER.info(log);
+						}
+						LOGGER.info("FIM DO PROCESSO DE GERAÇÃO DE OCR.zip");
+					
 					}
-					LOGGER.info("FIM DO PROCESSO DE GERAÇÃO DE OCR");
+				} catch (Exception e) {
+					e.printStackTrace();
+					LOGGER.error(e.getMessage());
+				}finally {
+					procesando(false);
+				}
+
+			}
+		}).start();
+	}
+	private void gerarTxtHocr() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					textLogs.setText("");
+					if (JOptionPane.showConfirmDialog(null, "Esta rotina vai chamar o OCR Processar para gerar os arquivos txt e hocr, deseja prosseguir?",
+							"ALERTA", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+						procesando(true);
+						String[] diretorios = textDir.getText().split("\\n");
+						for (int i = 0; i < diretorios.length; i++) {
+							String diretorio = diretorios[i];
+							String log="\n<PROCESSANDO OCR> do diretório " + diretorio;
+							textLogs.append(log);
+							LOGGER.info(log);
+							client.gerarTxtHocr(diretorio);
+							log="\n<FIM PROCESSO OCR> do diretório " + diretorio;
+							textLogs.append(log);
+							LOGGER.info(log);
+						}
+						LOGGER.info("FIM DO PROCESSO DE GERAÇÃO txt e hocr");
+					}
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 					LOGGER.error(e.getMessage());
