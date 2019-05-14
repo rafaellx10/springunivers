@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Arquivo {
+public class Diretorio {
 	private String nome;
 	private double kb;
 	private double mb;
@@ -17,11 +17,11 @@ public class Arquivo {
 	private File endereco;
 	private Date inicio;
 	private Date fim;
-	private List<Arquivo> imagens;
-	public List<Arquivo> getImagens() {
+	private List<Diretorio> imagens;
+	public List<Diretorio> getImagens() {
 		return imagens;
 	}
-	public void addImagem(Arquivo imagem) {
+	public void addImagem(Diretorio imagem) {
 		imagens.add(imagem);
 	}
 	public Date getInicio() {
@@ -39,11 +39,11 @@ public class Arquivo {
 	public String getNome() {
 		return nome;
 	}
-	public Arquivo(String nome) {
+	public Diretorio(String nome) {
 		super();
 		this.nome = nome;
 		this.endereco=new File(nome);
-		this.imagens = new ArrayList<Arquivo>();
+		this.imagens = new ArrayList<Diretorio>();
 	}
 	public File getEndereco() {
 		return endereco;
@@ -105,7 +105,7 @@ public class Arquivo {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Arquivo other = (Arquivo) obj;
+		Diretorio other = (Diretorio) obj;
 		if (nome == null) {
 			if (other.nome != null)
 				return false;

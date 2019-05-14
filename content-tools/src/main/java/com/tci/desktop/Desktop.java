@@ -32,7 +32,7 @@ import org.springframework.stereotype.Component;
 import com.tci.controller.Gerenciador;
 import com.tci.controller.OcrProcessClient;
 import com.tci.controller.DiretorioDetalhe;
-import com.tci.model.Arquivo;
+import com.tci.model.Diretorio;
 import com.tci.util.FileWritterUtil;
 import java.awt.Font;
 
@@ -333,7 +333,7 @@ public class Desktop extends JFrame {
 						String linha = linhas[i];
 						conversor.atualizarRepositorio(linha);
 					}
-					for(Arquivo diretorio: conversor.getRepositorio()) {
+					for(Diretorio diretorio: conversor.getRepositorio()) {
 						textLogs.append(conversor.removerImagens(diretorio));
 					}
 					textLogs.append("\nFINALIZADO");
@@ -361,7 +361,7 @@ public class Desktop extends JFrame {
 							procesando(true);
 							for (int i = 0; i < scanDiretorios.length; i++) {
 								String endereco = scanDiretorios[i];
-								textLogs.append(conversor.converter(new Arquivo(endereco)));
+								textLogs.append(conversor.converter(new Diretorio(endereco)));
 							}
 							LOGGER.info("FIM DO PROCESSO");
 						}

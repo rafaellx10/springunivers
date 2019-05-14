@@ -30,41 +30,41 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.tci.ContentTools;
-import com.tci.model.Arquivo;
+import com.tci.model.Diretorio;
 
 @Component
 public class Gerenciador {
 	private static final Logger LOGGER = LogManager.getLogger(Gerenciador.class);
 	@Autowired
 	private ArquivoDetalhe detalhe;
-	private Map<String,Arquivo> repositorio;
+	private Map<String,Diretorio> repositorio;
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
 	private File csvImagemFile = new File(ContentTools.APP_PATH, "REMOVER_IMAGENS_RESUMO.csv");
 	
 	public void criarRepositorio() {
-		repositorio=new HashMap<String,Arquivo>();
+		repositorio=new HashMap<String,Diretorio>();
 	}
 	public void atualizarRepositorio(String linhaCsv) {
 		String[] campos = linhaCsv.split("\\;");
 		String nomeDir=campos[0];
 		String nomeImg = campos[1];
-		Arquivo diretorio=null;
+		Diretorio diretorio=null;
 		if((diretorio = repositorio.get(nomeDir))==null) {
-			diretorio = new Arquivo(nomeDir);
+			diretorio = new Diretorio(nomeDir);
 			repositorio.put(nomeDir, diretorio);
 		}
-		diretorio.addImagem(new Arquivo(nomeImg));
+		diretorio.addImagem(new Diretorio(nomeImg));
 	}
-	public List<Arquivo> getRepositorio() {
-		return new ArrayList<Arquivo>(repositorio.values());
+	public List<Diretorio> getRepositorio() {
+		return new ArrayList<Diretorio>(repositorio.values());
 	}
-	public String removerImagens(Arquivo diretorio) throws Exception {
+	public String removerImagens(Diretorio diretorio) throws Exception {
 		diretorioVolume(diretorio, false);
 		diretorio.setTotal(diretorio.getImagens().size());
 		removerImagem(diretorio);
 		return diretorio.getNome() + " --> Removendo imagens\n";
 	}
-	private void removerImagem(Arquivo diretorio) throws Exception {
+	private void removerImagem(Diretorio diretorio) throws Exception {
 		StringBuilder sb = new StringBuilder();
 		if (!csvImagemFile.exists()) {
 			csvImagemFile.createNewFile();
@@ -81,7 +81,7 @@ public class Gerenciador {
 			sb.append("KbNew");
 			sb.append("MbNew");
 			sb.append("GbNew\n");
-			for(Arquivo imagem: diretorio.getImagens()) {
+			for(Diretorio imagem: diretorio.getImagens()) {
 				sb.append(removerImagem(diretorio, imagem));
 			}
 			diretorioVolume(diretorio, true);
@@ -99,7 +99,7 @@ public class Gerenciador {
 			LOGGER.info("<RESUMO> csvImagens do diretório: {} ", diretorio.getNome());
 		}
 	}
-	private String removerImagem(Arquivo diretorio, Arquivo imagem) throws Exception {
+	private String removerImagem(Diretorio diretorio, Diretorio imagem) throws Exception {
 		StringBuilder sb = new StringBuilder();
 		File img = new File(diretorio.getEndereco(),imagem.getNome());
 		sb.append(" ; ;");
@@ -114,7 +114,7 @@ public class Gerenciador {
 		
 		return sb.toString(); 
 	}
-	public String converter(Arquivo diretorio) throws Exception {
+	public String converter(Diretorio diretorio) throws Exception {
 		if (diretorio.getEndereco().isDirectory()) {
 			diretorioVolume(diretorio, false);
 			String volume = String.format("%s %.2f (Kb) %.2f (Mb) %.2f (Gb) ", diretorio.getNome(), diretorio.getKb(),
@@ -162,7 +162,7 @@ public class Gerenciador {
 		}
 	}
 
-	private void diretorioVolume(Arquivo diretorio, boolean depois) {
+	private void diretorioVolume(Diretorio diretorio, boolean depois) {
 		long bytes = FileUtils.sizeOfDirectory(diretorio.getEndereco());
 		if (depois) {
 			diretorio.setKbNew(detalhe.Kbytes(bytes));
@@ -209,7 +209,7 @@ public class Gerenciador {
 		}
 	}
 
-	private void csv(Arquivo diretorio) throws Exception {
+	private void csv(Diretorio diretorio) throws Exception {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
 		StringBuilder sb = new StringBuilder();
 		String resumo = new SimpleDateFormat("yyyyMMdd").format(new Date());
