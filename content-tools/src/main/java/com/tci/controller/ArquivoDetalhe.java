@@ -67,7 +67,11 @@ public class ArquivoDetalhe {
 	public String tipoConteudo(File arquivo) throws Exception {
 		return defaultTika.detect(arquivo);
 	}
-
+	public boolean isTif(File arquivo) throws Exception {
+		String extensao=tipoConteudo(arquivo);
+		return extensao.contains("tif") || extensao.contains("tiff");
+	}
+	
 	/*
 	 * public static void main(String[] args) { try { Tika t = new Tika();
 	 * 

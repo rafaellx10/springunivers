@@ -58,7 +58,7 @@ public class Desktop extends JFrame {
 	private Loading loding=new Loading();
 	private JButton btnGerarTxtHocr = new JButton("Gerar TXT e HOCR");
 	private JButton btnGerarOcrzip = new JButton("Gerar OCR.zip");
-	private JButton btnTifTxtOCr = new JButton("Contém Tif/Txt/Hocr?");
+	private JButton btnTifTxtOCr = new JButton("Contém Txt/Hocr?");
 	public Desktop() {
 		setTitle("Content Tools - Porta OCR Processor: " + ContentTools.OCR_PROCESSOR_PORT);
 		textDir.setFont(new Font("Arial", Font.PLAIN, 12));
@@ -134,7 +134,7 @@ public class Desktop extends JFrame {
 		});
 		btnTifTxtOCr.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				contemTifTxtOCr();
+				contemTxtHocr();
 			}
 		});
 		
@@ -151,28 +151,29 @@ public class Desktop extends JFrame {
 			JOptionPane.showMessageDialog(null, "PROCESSO FINALIZADO");
 		}
 	}
-	private void contemTifTxtOCr() {
+	private void contemTxtHocr() {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
 					textLogs.setText("");
-					if (JOptionPane.showConfirmDialog(null, "Esta rotina valida a existência dos arquivos OCR.zip, deseja prosseguir?",
+					if (JOptionPane.showConfirmDialog(null, "Esta rotina valida a existência dos arquivos OCR.zip, .txt e .hocr, deseja prosseguir?",
 							"ALERTA", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 						procesando(true);
+						StringBuilder csv=new StringBuilder();
 						String[] diretorios = textDir.getText().split("\\n");
 						for (int i = 0; i < diretorios.length; i++) {
 							String diretorio = diretorios[i];
-							String log="<GERANDO OCR.zip> do diretório " + diretorio;
+							String log="<VALIDANDO EXISTENCIA do OCR.zip, .txt e .hocr> do diretório " + diretorio;
 							textLogs.append(log);
 							LOGGER.info(log);
-							conversor.gerarOcrZip(diretorio);
-							log="\n<FIM GERAÇÃO OCR.zip> do diretório " + diretorio + "\n";
+							csv.append(detalhe.contemOcrZipTxtHocr(diretorio));
+							log="\n<FIM VALIDAÇÃO EXISTENCIA do OCR.zip, .txt e .hocr> do diretório" + diretorio + "\n";
 							textLogs.append(log);
 							LOGGER.info(log);
 						}
 						LOGGER.info("FIM DO PROCESSO DE GERAÇÃO DE OCR.zip");
-					
+						new FileWritterUtil().writer("DIRETORIO_OCR_TXT_HOCR.csv","DIRETORIO;OCR.zip;ENDERECO;NOME;TXT;HOCR", csv.toString());
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -305,7 +306,7 @@ public class Desktop extends JFrame {
 					String[] scanDiretorios = textDir.getText().split("\\n");
 					for (int i = 0; i < scanDiretorios.length; i++) {
 						String var = scanDiretorios[i];
-						var = detalhe.contemOcrZip(var);
+						var = detalhe.processaOcrZip(var);
 						if(var!=null && var.trim().length() >0)
 							textLogs.append(var + "\n");
 					}
