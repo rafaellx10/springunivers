@@ -58,6 +58,7 @@ public class Desktop extends JFrame {
 	private Loading loding=new Loading();
 	private JButton btnGerarTxtHocr = new JButton("Gerar TXT e HOCR");
 	private JButton btnGerarOcrzip = new JButton("Gerar OCR.zip");
+	private JButton btnTifTxtOCr = new JButton("Contém Tif/Txt/Hocr?");
 	public Desktop() {
 		setTitle("Content Tools - Porta OCR Processor: " + ContentTools.OCR_PROCESSOR_PORT);
 		textDir.setFont(new Font("Arial", Font.PLAIN, 12));
@@ -99,6 +100,7 @@ public class Desktop extends JFrame {
 		pAcoes.add(btnRemoverImagem);
 		pAcoes.add(btnGerarTxtHocr);
 		pAcoes.add(btnGerarOcrzip);
+		pAcoes.add(btnTifTxtOCr);
 		pAcoes.add(loding);
 		
 		content.add(pAcoes,BorderLayout.SOUTH);
@@ -130,7 +132,11 @@ public class Desktop extends JFrame {
 				gerarOcrZip();
 			}
 		});
-		
+		btnTifTxtOCr.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				contemTifTxtOCr();
+			}
+		});
 		
 	}
 	private void procesando(boolean processando) {
@@ -144,6 +150,39 @@ public class Desktop extends JFrame {
 		if(!processando) {
 			JOptionPane.showMessageDialog(null, "PROCESSO FINALIZADO");
 		}
+	}
+	private void contemTifTxtOCr() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					textLogs.setText("");
+					if (JOptionPane.showConfirmDialog(null, "Esta rotina valida a existência dos arquivos OCR.zip, deseja prosseguir?",
+							"ALERTA", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+						procesando(true);
+						String[] diretorios = textDir.getText().split("\\n");
+						for (int i = 0; i < diretorios.length; i++) {
+							String diretorio = diretorios[i];
+							String log="<GERANDO OCR.zip> do diretório " + diretorio;
+							textLogs.append(log);
+							LOGGER.info(log);
+							conversor.gerarOcrZip(diretorio);
+							log="\n<FIM GERAÇÃO OCR.zip> do diretório " + diretorio + "\n";
+							textLogs.append(log);
+							LOGGER.info(log);
+						}
+						LOGGER.info("FIM DO PROCESSO DE GERAÇÃO DE OCR.zip");
+					
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					LOGGER.error(e.getMessage());
+				}finally {
+					procesando(false);
+				}
+
+			}
+		}).start();
 	}
 	private void gerarOcrZip() {
 		new Thread(new Runnable() {

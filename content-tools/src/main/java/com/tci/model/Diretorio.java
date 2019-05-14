@@ -18,7 +18,7 @@ public class Diretorio {
 	private Date inicio;
 	private Date fim;
 	private List<Imagem> imagens;
-	private boolean contemOcrZip;
+	private String contemOcrZip;
 	public List<Imagem> getImagens() {
 		return imagens;
 	}
@@ -114,10 +114,10 @@ public class Diretorio {
 			return false;
 		return true;
 	}
-	public boolean isContemOcrZip() {
+	public String getContemOcrZip() {
 		return contemOcrZip;
 	}
-	public void setContemOcrZip(boolean contemOcrZip) {
+	public void setContemOcrZip(String contemOcrZip) {
 		this.contemOcrZip = contemOcrZip;
 	}
 	

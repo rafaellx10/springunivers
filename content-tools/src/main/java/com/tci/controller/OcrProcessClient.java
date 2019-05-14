@@ -16,6 +16,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import com.tci.ContentTools;
+
 @Component
 
 public class OcrProcessClient {
@@ -39,7 +41,7 @@ public class OcrProcessClient {
 					map.add("buscaTextual", "true");
 					map.add("pDFPesquisavel", "true");
 					HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new HttpEntity<>(map);
-					String porta = Objects.toString(System.getProperty("ocr-processoor-port"),"8080");
+					String porta = Objects.toString(ContentTools.OCR_PROCESSOR_PORT,"8080");
 					String url="http://localhost:"+porta+"/gera-arquivos";
 					ResponseEntity<String> result = client.exchange(url,
 							HttpMethod.POST, requestEntity, String.class);
