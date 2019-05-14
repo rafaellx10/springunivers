@@ -4,7 +4,7 @@ import java.awt.Image;
 
 import javax.swing.ImageIcon;
 
-public class Imagem {
+public class ImagemUtil {
 	private static String URL="/img/";
 	public static ImageIcon gif(String nome) {
 		return gif("", nome);
@@ -31,7 +31,7 @@ public class Imagem {
 		prefixo = prefixo.isEmpty()?prefixo:prefixo+"/";
 		String imagem = String.format("%s%s%s%s", URL,prefixo,nome,extensao);
 		try {
-			ImageIcon icon= new ImageIcon(Imagem.class.getResource(imagem));
+			ImageIcon icon= new ImageIcon(ImagemUtil.class.getResource(imagem));
 			return icon;
 		}catch (Exception e) {
 			return null;

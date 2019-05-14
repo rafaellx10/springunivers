@@ -8,7 +8,6 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -31,6 +30,7 @@ import org.springframework.stereotype.Component;
 
 import com.tci.ContentTools;
 import com.tci.model.Diretorio;
+import com.tci.model.Imagem;
 
 @Component
 public class Gerenciador {
@@ -38,7 +38,6 @@ public class Gerenciador {
 	@Autowired
 	private ArquivoDetalhe detalhe;
 	private Map<String,Diretorio> repositorio;
-	private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
 	private File csvImagemFile = new File(ContentTools.APP_PATH, "REMOVER_IMAGENS_RESUMO.csv");
 	
 	public void criarRepositorio() {
@@ -53,7 +52,7 @@ public class Gerenciador {
 			diretorio = new Diretorio(nomeDir);
 			repositorio.put(nomeDir, diretorio);
 		}
-		diretorio.addImagem(new Diretorio(nomeImg));
+		diretorio.addImagem(new Imagem(nomeImg));
 	}
 	public List<Diretorio> getRepositorio() {
 		return new ArrayList<Diretorio>(repositorio.values());

@@ -3,6 +3,7 @@ package com.tci.desktop;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -19,8 +20,10 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 
@@ -29,12 +32,12 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.tci.ContentTools;
+import com.tci.controller.DiretorioDetalhe;
 import com.tci.controller.Gerenciador;
 import com.tci.controller.OcrProcessClient;
-import com.tci.controller.DiretorioDetalhe;
 import com.tci.model.Diretorio;
 import com.tci.util.FileWritterUtil;
-import java.awt.Font;
 
 @Component
 public class Desktop extends JFrame {
@@ -56,119 +59,79 @@ public class Desktop extends JFrame {
 	private JButton btnGerarTxtHocr = new JButton("Gerar TXT e HOCR");
 	private JButton btnGerarOcrzip = new JButton("Gerar OCR.zip");
 	public Desktop() {
+		setTitle("Content Tools - Porta OCR Processor: " + ContentTools.OCR_PROCESSOR_PORT);
+		textDir.setFont(new Font("Arial", Font.PLAIN, 12));
+		textDir.setLineWrap(true);
+		textDir.setWrapStyleWord(true);
+		textLogs.setLineWrap(true);
+		textLogs.setWrapStyleWord(true);
+		textLogs.setFont(new Font("Arial", Font.PLAIN, 12));
+		JScrollPane scrollDir = new JScrollPane();
+		scrollDir.setViewportView(textDir);
+		JScrollPane scrollLogs = new JScrollPane();
+		scrollLogs.setViewportView(textLogs);
+		
+		JSplitPane split = new JSplitPane(SwingConstants.VERTICAL, scrollDir, scrollLogs); 
+		split.setOneTouchExpandable(true);
+		split.setDividerLocation(0.5);
+		split.setResizeWeight(0.5);
+	        
+		JPanel content = new JPanel();
+		content.setLayout(new BorderLayout());
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPane.addTab("Operações: " + ContentTools.OCR_PROCESSOR_PORT, null, content, null);
 		getContentPane().add(tabbedPane, BorderLayout.CENTER);
-
+		content.add(split,BorderLayout.CENTER);
+		
 		JPanel pAcoes = new JPanel();
 		FlowLayout flowLayout = (FlowLayout) pAcoes.getLayout();
 		flowLayout.setAlignment(FlowLayout.LEFT);
 		pAcoes.setBorder(new TitledBorder(null, "A\u00E7\u00F5es", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-
-		JPanel pDiretorios = new JPanel();
-		pDiretorios.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Diret\u00F3rios",
-				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-
-		JPanel pLog = new JPanel();
-		pLog.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "LOG", TitledBorder.LEADING,
-				TitledBorder.TOP, null, new Color(0, 0, 0)));
-
-		JPanel panel = new JPanel();
-		tabbedPane.addTab("Content Tools", null, panel, null);
-		GridBagLayout gbl_panel = new GridBagLayout();
-
-		panel.setLayout(gbl_panel);
-
-		GridBagConstraints gbc_textArea = new GridBagConstraints();
-		gbc_textArea.weighty = 1.0;
-		gbc_textArea.weightx = 1.0;
-		gbc_textArea.insets = new Insets(0, 0, 5, 0);
-		gbc_textArea.fill = GridBagConstraints.BOTH;
-		gbc_textArea.gridx = 0;
-		gbc_textArea.gridy = 0;
-		textDir.setFont(new Font("Arial", Font.PLAIN, 12));
-
-		textDir.setLineWrap(true);
-		textDir.setWrapStyleWord(true);
-
-		textLogs.setLineWrap(true);
-		textLogs.setWrapStyleWord(true);
-		textLogs.setFont(new Font("Arial", Font.PLAIN, 12));
-
-		JScrollPane scrollDir = new JScrollPane();
-		scrollDir.setViewportView(textDir);
-
-		GridBagConstraints gbc_panel_1 = new GridBagConstraints();
-		gbc_panel_1.insets = new Insets(0, 0, 5, 0);
-		gbc_panel_1.fill = GridBagConstraints.BOTH;
-		gbc_panel_1.gridx = 0;
-		gbc_panel_1.gridy = 1;
-
 		btnConverter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				converter();
 			}
 		});
+		
+		pAcoes.add(btnCsvXDiretorio);
+		pAcoes.add(btnValidaOcr);
 		pAcoes.add(btnConverter);
-
+		pAcoes.add(btnRemoverImagem);
+		pAcoes.add(btnGerarTxtHocr);
+		pAcoes.add(btnGerarOcrzip);
+		pAcoes.add(loding);
+		
+		content.add(pAcoes,BorderLayout.SOUTH);
+		
 		btnValidaOcr.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				validarOcr();
 			}
 		});
-		pAcoes.add(btnValidaOcr);
-
-		JScrollPane scrollLogs = new JScrollPane();
-		scrollLogs.setViewportView(textLogs);
-		GridBagConstraints gbc_scrollLogs = new GridBagConstraints();
-		gbc_scrollLogs.weighty = 1.0;
-		gbc_scrollLogs.weightx = 1.0;
-		gbc_scrollLogs.fill = GridBagConstraints.BOTH;
-		gbc_scrollLogs.gridx = 0;
-		gbc_scrollLogs.gridy = 2;
-		pDiretorios.setLayout(new BorderLayout(0, 0));
-
-		pDiretorios.add(scrollDir);
-
-		panel.add(pDiretorios, gbc_textArea);
-
-		panel.add(pAcoes, gbc_panel_1);
+		btnCsvXDiretorio.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				csvVersusDiretorio();
+			}
+		});
 		btnRemoverImagem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				removerImagens();
 			}
 		});
 		
-		
-		pAcoes.add(btnRemoverImagem);
-		btnCsvXDiretorio.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				csvVersusDiretorio();
-			}
-		});
-		
-		
-		pAcoes.add(btnCsvXDiretorio);
 		btnGerarTxtHocr.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				gerarTxtHocr();
 			}
 		});
 		
-		pAcoes.add(btnGerarTxtHocr);
 		btnGerarOcrzip.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				gerarOcrZip();
 			}
 		});
 		
-		pAcoes.add(btnGerarOcrzip);
 		
-		pAcoes.add(loding);
-		pLog.setLayout(new BorderLayout(0, 0));
-
-		pLog.add(scrollLogs);
-		panel.add(pLog, gbc_scrollLogs);
-
 	}
 	private void procesando(boolean processando) {
 		btnConverter.setEnabled(!processando);
@@ -382,7 +345,7 @@ public class Desktop extends JFrame {
 	}
 
 	public void exibir() {
-		setSize(700, 700);
+		setSize(1024, 500);
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);

@@ -41,7 +41,6 @@ public class OcrProcessClient {
 					HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new HttpEntity<>(map);
 					String porta = Objects.toString(System.getProperty("ocr-processoor-port"),"8080");
 					String url="http://localhost:"+porta+"/gera-arquivos";
-					LOGGER.info("URL OCR PROCESSOR " + url);
 					ResponseEntity<String> result = client.exchange(url,
 							HttpMethod.POST, requestEntity, String.class);
 					if (result.getStatusCode().equals(HttpStatus.OK)) {

@@ -17,11 +17,12 @@ public class Diretorio {
 	private File endereco;
 	private Date inicio;
 	private Date fim;
-	private List<Diretorio> imagens;
-	public List<Diretorio> getImagens() {
+	private List<Imagem> imagens;
+	private boolean contemOcrZip;
+	public List<Imagem> getImagens() {
 		return imagens;
 	}
-	public void addImagem(Diretorio imagem) {
+	public void addImagem(Imagem imagem) {
 		imagens.add(imagem);
 	}
 	public Date getInicio() {
@@ -43,7 +44,7 @@ public class Diretorio {
 		super();
 		this.nome = nome;
 		this.endereco=new File(nome);
-		this.imagens = new ArrayList<Diretorio>();
+		this.imagens = new ArrayList<Imagem>();
 	}
 	public File getEndereco() {
 		return endereco;
@@ -112,6 +113,12 @@ public class Diretorio {
 		} else if (!nome.equals(other.nome))
 			return false;
 		return true;
+	}
+	public boolean isContemOcrZip() {
+		return contemOcrZip;
+	}
+	public void setContemOcrZip(boolean contemOcrZip) {
+		this.contemOcrZip = contemOcrZip;
 	}
 	
 }
