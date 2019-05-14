@@ -156,24 +156,27 @@ public class Desktop extends JFrame {
 			@Override
 			public void run() {
 				try {
+					String[] diretorios = textDir.getText().split("\\n");
+					boolean arvore=diretorios.length==1;
+					if(arvore)
+						JOptionPane.showMessageDialog(null, "Você só informou um diretório, o processo será executado em toda árvore","Atenção",JOptionPane.WARNING_MESSAGE);
 					textLogs.setText("");
 					if (JOptionPane.showConfirmDialog(null, "Esta rotina valida a existência dos arquivos OCR.zip, .txt e .hocr, deseja prosseguir?",
 							"ALERTA", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 						procesando(true);
 						StringBuilder csv=new StringBuilder();
-						String[] diretorios = textDir.getText().split("\\n");
 						for (int i = 0; i < diretorios.length; i++) {
 							String diretorio = diretorios[i];
 							String log="<VALIDANDO EXISTENCIA do OCR.zip, .txt e .hocr> do diretório " + diretorio;
 							textLogs.append(log);
 							LOGGER.info(log);
-							csv.append(detalhe.contemOcrZipTxtHocr(diretorio));
+							csv.append(detalhe.contemOcrZipTxtHocr(arvore, diretorio));
 							log="\n<FIM VALIDAÇÃO EXISTENCIA do OCR.zip, .txt e .hocr> do diretório" + diretorio + "\n";
 							textLogs.append(log);
 							LOGGER.info(log);
 						}
 						LOGGER.info("FIM DO PROCESSO DE GERAÇÃO DE OCR.zip");
-						new FileWritterUtil().writer("DIRETORIO_OCR_TXT_HOCR.csv","DIRETORIO;OCR.zip;ENDERECO;NOME;TXT;HOCR", csv.toString());
+						new FileWritterUtil().writer("DIRETORIO_OCR_TXT_HOCR.csv","DIRETORIO;OCR.zip;ENDERECO;NOME;MB;GB;TXT;HOCR", csv.toString());
 					}
 				} catch (Exception e) {
 					e.printStackTrace();

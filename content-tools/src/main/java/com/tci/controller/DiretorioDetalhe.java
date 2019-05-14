@@ -26,7 +26,7 @@ public class DiretorioDetalhe {
 		}
 		return scan ;
 	}
-	public String contemOcrZipTxtHocr(String diretorio) {
+	public String contemOcrZipTxtHocr(boolean arvore,String diretorio) {
 		Diretorio dir = contemOcrZip(new Diretorio(diretorio));
 		StringBuilder csv = new StringBuilder(dir.getNome()+";"+dir.getContemOcrZip());
 		File[] files = dir.getEndereco().listFiles();
@@ -35,7 +35,7 @@ public class DiretorioDetalhe {
 			if(arquivoDetalhe.isTif(file)) {
 				File txt = new File(diretorio, file.getName().replaceAll("tif", "txt"));
 				File hocr = new File(diretorio, file.getName().replaceAll("tif", "hocr"));
-				csv.append("\n;;"+file.getParent()+";"+file.getName()+";"+(txt.exists()?"S":"N")+";"+(hocr.exists()?"S":"N"));
+				csv.append("\n;;"+file.getParent()+";"+file.getName()+";"+String.format("%.3f",arquivoDetalhe.Mbytes(file.length())) +";"+String.format("%.3f",arquivoDetalhe.Gbytes(file.length())) +";"+ (txt.exists()?"S":"N")+";"+(hocr.exists()?"S":"N"));
 			}
 		}
 		}catch (Exception e) {
