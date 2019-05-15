@@ -51,14 +51,14 @@ public class Desktop extends JFrame {
 	private OcrProcessClient client;
 	private JTextArea textDir = new JTextArea();
 	private JTextArea textLogs = new JTextArea();
-	private JButton btnConverter = new JButton("Converter");
-	private JButton btnValidaOcr = new JButton("Validar OCR");
+	private JButton btnConverter = new JButton("Converter Jpg to Tiff");
+	private JButton btnValidaOcr = new JButton("Existe OCR.zip?");
 	private JButton btnRemoverImagem = new JButton("Remover Imagem");
 	private JButton btnCsvXDiretorio = new JButton("Csv X Diretorio");
 	private Loading loding=new Loading();
 	private JButton btnGerarTxtHocr = new JButton("Gerar TXT e HOCR");
 	private JButton btnGerarOcrzip = new JButton("Gerar OCR.zip");
-	private JButton btnTifTxtOCr = new JButton("Contém Txt/Hocr?");
+	private JButton btnTifTxtOCr = new JButton("Scan Imagens?");
 	public Desktop() {
 		setTitle("Content Tools - Porta OCR Processor: " + ContentTools.OCR_PROCESSOR_PORT);
 		textDir.setFont(new Font("Arial", Font.PLAIN, 11));
@@ -148,6 +148,7 @@ public class Desktop extends JFrame {
 		
 	}
 	private void procesando(boolean processando) {
+		
 		btnConverter.setEnabled(!processando);
 		btnValidaOcr.setEnabled(!processando);
 		btnRemoverImagem.setEnabled(!processando);
@@ -158,6 +159,7 @@ public class Desktop extends JFrame {
 		
 		loding.exibir(processando);
 		if(!processando) {
+			detalhe.limparLog();
 			JOptionPane.showMessageDialog(null, "PROCESSO FINALIZADO");
 		}
 	}
@@ -222,7 +224,7 @@ public class Desktop extends JFrame {
 							LOGGER.info(log);
 						}
 						LOGGER.info("FIM DO PROCESSO DE GERAÇÃO DE OCR.zip");
-						new FileWritterUtil().writer("DIRETORIO_OCR_TXT_HOCR.csv","DIRETORIO;OCR.zip;ENDERECO;NOME;MB;GB;TXT;HOCR", csv.toString());
+						new FileWritterUtil().writer("DIRETORIO_OCR_TXT_HOCR.csv","DIRETORIO;OCR.zip;ENDERECO;NOME;MB;GB;TXT;HOCR;TIFERRO", csv.toString());
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -352,18 +354,21 @@ public class Desktop extends JFrame {
 			public void run() {
 				try {
 					textLogs.setText("");
-					procesando(true);
-					String[] linhas = textDir.getText().split("\\n");
-					conversor.criarRepositorio();
-					for (int i = 0; i < linhas.length; i++) {
-						String linha = linhas[i];
-						conversor.atualizarRepositorio(linha);
+					if (JOptionPane.showConfirmDialog(null, "Para remover a imagem deve estar no padrão diretorio;nome.extensao. Podemos prosseguir? ",
+							"ALERTA", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+						procesando(true);
+						String[] linhas = textDir.getText().split("\\n");
+						conversor.criarRepositorio();
+						for (int i = 0; i < linhas.length; i++) {
+							String linha = linhas[i];
+							conversor.atualizarRepositorio(linha);
+						}
+						for(Diretorio diretorio: conversor.getRepositorio()) {
+							textLogs.append(conversor.removerImagens(diretorio));
+						}
+						textLogs.append("\nFINALIZADO");
+						LOGGER.info("FIM DO PROCESSO");
 					}
-					for(Diretorio diretorio: conversor.getRepositorio()) {
-						textLogs.append(conversor.removerImagens(diretorio));
-					}
-					textLogs.append("\nFINALIZADO");
-					LOGGER.info("FIM DO PROCESSO");
 				} catch (Exception e) {
 					e.printStackTrace();
 					LOGGER.error(e.getMessage());

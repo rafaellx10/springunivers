@@ -15,6 +15,9 @@ public class DiretorioDetalhe {
 	private ArquivoDetalhe arquivoDetalhe;
 	private static final Logger LOGGER = LogManager.getLogger(DiretorioDetalhe.class);
 	private StringBuilder log = new StringBuilder();
+	public void limparLog() {
+		log = new StringBuilder();
+	}
 	public String processaOcrZip(boolean arvore,String diretorio) {
 		String log="";
 		if(arvore) {
@@ -55,10 +58,10 @@ public class DiretorioDetalhe {
 		File[] files = dir.getEndereco().listFiles();
 		try {
 		for(File file: files) {
-			if(arquivoDetalhe.isTif(file)) {
+			if(arquivoDetalhe.isTif(file) || arquivoDetalhe.jpgJpegOriginal(file)) {
 				File txt = new File(diretorio, file.getName().replaceAll("tif", "txt"));
 				File hocr = new File(diretorio, file.getName().replaceAll("tif", "hocr"));
-				csv.append("\n;;"+file.getParent()+";"+file.getName()+";"+String.format("%.3f",arquivoDetalhe.Mbytes(file.length())) +";"+String.format("%.3f",arquivoDetalhe.Gbytes(file.length())) +";"+ (txt.exists()?"S":"N")+";"+(hocr.exists()?"S":"N"));
+				csv.append("\n;;"+file.getParent()+";"+file.getName()+";"+String.format("%.3f",arquivoDetalhe.Mbytes(file.length())) +";"+String.format("%.3f",arquivoDetalhe.Gbytes(file.length())) +";"+ (txt.exists()?"S":"N")+";"+(hocr.exists()?"S":"N")+";"+(arquivoDetalhe.jpgJpegOriginal(file)?"S":"N"));
 			}
 		}
 		csv.append("\n");

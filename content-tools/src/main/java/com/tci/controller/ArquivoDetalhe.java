@@ -71,6 +71,10 @@ public class ArquivoDetalhe {
 		String extensao=tipoConteudo(arquivo);
 		return extensao.contains("tif") || extensao.contains("tiff");
 	}
+	public boolean jpgJpegOriginal(File arquivo) throws Exception {
+		return tipoConteudo(arquivo).toLowerCase().contains("jpeg")
+				|| tipoConteudo(arquivo).toLowerCase().contains("jpg");
+	}
 	
 	/*
 	 * public static void main(String[] args) { try { Tika t = new Tika();

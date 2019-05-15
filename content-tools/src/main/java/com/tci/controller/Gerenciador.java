@@ -36,7 +36,7 @@ import com.tci.model.Imagem;
 public class Gerenciador {
 	private static final Logger LOGGER = LogManager.getLogger(Gerenciador.class);
 	@Autowired
-	private ArquivoDetalhe detalhe;
+	private ArquivoDetalhe arquivoDetalhe;
 	private Map<String,Diretorio> repositorio;
 	private File csvImagemFile = new File(ContentTools.APP_PATH, "REMOVER_IMAGENS_RESUMO.csv");
 	
@@ -103,9 +103,9 @@ public class Gerenciador {
 		File img = new File(diretorio.getEndereco(),imagem.getNome());
 		sb.append(" ; ;");
 		sb.append(imagem.getNome() + ";");
-		sb.append(String.format("%.3f", detalhe.Kbytes(img.length())) + ";");
-		sb.append(String.format("%.3f", detalhe.Mbytes(img.length())) + ";");
-		sb.append(String.format("%.3f", detalhe.Gbytes(img.length())) + ";");
+		sb.append(String.format("%.3f", arquivoDetalhe.Kbytes(img.length())) + ";");
+		sb.append(String.format("%.3f", arquivoDetalhe.Mbytes(img.length())) + ";");
+		sb.append(String.format("%.3f", arquivoDetalhe.Gbytes(img.length())) + ";");
 		sb.append(" ; ; ;");
 		boolean removida=false;
 		if(img.exists()) removida= img.delete();
@@ -123,20 +123,20 @@ public class Gerenciador {
 			File[] arquivos = diretorio.getEndereco().listFiles();
 			diretorio.setTotal(arquivos.length);
 			for (File arquivo : arquivos) {
-				if (arquivo.isFile() && jpgJpegOriginal(arquivo)) {
-					String mb = detalhe.megabytes(arquivo);
-					String kb = detalhe.kilobytes(arquivo);
+				if (arquivo.isFile() && arquivoDetalhe.jpgJpegOriginal(arquivo)) {
+					String mb = arquivoDetalhe.megabytes(arquivo);
+					String kb = arquivoDetalhe.kilobytes(arquivo);
 					File jpg = getJpgFile(arquivo);
 					arquivo.renameTo(jpg);
-					String mbj = detalhe.megabytes(jpg);
-					String kbj = detalhe.kilobytes(jpg);
+					String mbj = arquivoDetalhe.megabytes(jpg);
+					String kbj = arquivoDetalhe.kilobytes(jpg);
 					LOGGER.info("O arquivo {} {} {} <FOI> convertido para {} {} {} ", arquivo.getName(), kb, mb,
 							jpg.getName(), kbj, mbj);
 					converterJpgToTif(jpg);
 					removerJpg(jpg);
 				} else {
 					LOGGER.info("O arquivo {} {} {} <POSSUI> a extensão adequada ", arquivo.getName(),
-							detalhe.kilobytes(arquivo), detalhe.megabytes(arquivo));
+							arquivoDetalhe.kilobytes(arquivo), arquivoDetalhe.megabytes(arquivo));
 				}
 			}
 
@@ -164,13 +164,13 @@ public class Gerenciador {
 	private void diretorioVolume(Diretorio diretorio, boolean depois) {
 		long bytes = FileUtils.sizeOfDirectory(diretorio.getEndereco());
 		if (depois) {
-			diretorio.setKbNew(detalhe.Kbytes(bytes));
-			diretorio.setMbNew(detalhe.Mbytes(bytes));
-			diretorio.setGbNew(detalhe.Gbytes(bytes));
+			diretorio.setKbNew(arquivoDetalhe.Kbytes(bytes));
+			diretorio.setMbNew(arquivoDetalhe.Mbytes(bytes));
+			diretorio.setGbNew(arquivoDetalhe.Gbytes(bytes));
 		} else {
-			diretorio.setKb(detalhe.Kbytes(bytes));
-			diretorio.setMb(detalhe.Mbytes(bytes));
-			diretorio.setGb(detalhe.Gbytes(bytes));
+			diretorio.setKb(arquivoDetalhe.Kbytes(bytes));
+			diretorio.setMb(arquivoDetalhe.Mbytes(bytes));
+			diretorio.setGb(arquivoDetalhe.Gbytes(bytes));
 		}
 	}
 
@@ -198,7 +198,7 @@ public class Gerenciador {
 
 				IIOImage iioImage = new IIOImage(jpgBuffer, null, null);
 				writer.write(null, iioImage, writeParam);
-				LOGGER.info("O arquivo {} {} <CONVERTIDO> com sucesso!! ", tif.getName(), detalhe.megabytes(tif));
+				LOGGER.info("O arquivo {} {} <CONVERTIDO> com sucesso!! ", tif.getName(), arquivoDetalhe.megabytes(tif));
 			} finally {
 				writer.dispose();
 				writer = null;
@@ -248,10 +248,7 @@ public class Gerenciador {
 		return tif;
 	}
 
-	public boolean jpgJpegOriginal(File arquivo) throws Exception {
-		return detalhe.tipoConteudo(arquivo).toLowerCase().contains("jpeg")
-				|| detalhe.tipoConteudo(arquivo).toLowerCase().contains("jpg");
-	}
+	
 	
 	public void gerarOcrZip(String diretorio) throws Exception {
 		File dir = new File(diretorio);
