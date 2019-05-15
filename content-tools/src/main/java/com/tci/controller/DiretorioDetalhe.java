@@ -1,7 +1,6 @@
 package com.tci.controller;
 
 import java.io.File;
-import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,16 +14,40 @@ public class DiretorioDetalhe {
 	@Autowired
 	private ArquivoDetalhe arquivoDetalhe;
 	private static final Logger LOGGER = LogManager.getLogger(DiretorioDetalhe.class);
-	public String processaOcrZip(String diretorio) {
-		Diretorio ocr = contemOcrZip(new Diretorio(diretorio));
-		String scan = diretorio+";"+ocr.getContemOcrZip();
-		if(ocr.getContemOcrZip().equals("S0kb")) {
-			File file = new File(ocr.getNome(),"OCR.zip");
-			file.delete();
-			LOGGER.warn("<REMOVENDO OCR> " + file.getAbsolutePath() + " " + file.length() + "bytes");
-			scan=scan + "\n" + "<REMOVENDO OCR> " + file.getAbsolutePath() + " " + file.length() + "bytes";
-		}
-		return scan ;
+	private StringBuilder log = new StringBuilder();
+	public String processaOcrZip(boolean arvore,String diretorio) {
+		String log="";
+		if(arvore) {
+			File[] dirs = new File(diretorio).listFiles();
+			for (File dir : dirs) {
+				if(dir.isDirectory()) {
+					System.out.println(dir.getName());
+					processaOcrZip(true, dir.getAbsolutePath());
+				}
+			}
+			log=processaOcrZipLog(diretorio);
+		}else
+			log=processaOcrZipLog(diretorio);
+		if(log!=null)
+			this.log.append(log);
+		return this.log.toString();
+	}
+	private String processaOcrZipLog(String diretorio) {
+		if(diretorioFinal(new File(diretorio))) {
+			Diretorio ocr = contemOcrZip(new Diretorio(diretorio));
+			String scan = diretorio+";"+ocr.getContemOcrZip()+"\n";
+			if(ocr.getContemOcrZip().equals("S0kb")) {
+				File file = new File(ocr.getNome(),"OCR.zip");
+				file.delete();
+				LOGGER.warn("<REMOVENDO OCR> " + file.getAbsolutePath() + " " + file.length() + "bytes");
+				scan=scan + "\n" + "<REMOVENDO OCR> " + file.getAbsolutePath() + " " + file.length() + "bytes";
+			}
+			return scan ;
+		}else return null;
+	}
+	
+	public boolean diretorioFinal(File dir) {
+		return dir.isDirectory() &&  dir.listFiles()[0].isFile();
 	}
 	public String contemOcrZipTxtHocr(boolean arvore,String diretorio) {
 		Diretorio dir = contemOcrZip(new Diretorio(diretorio));
@@ -38,6 +61,7 @@ public class DiretorioDetalhe {
 				csv.append("\n;;"+file.getParent()+";"+file.getName()+";"+String.format("%.3f",arquivoDetalhe.Mbytes(file.length())) +";"+String.format("%.3f",arquivoDetalhe.Gbytes(file.length())) +";"+ (txt.exists()?"S":"N")+";"+(hocr.exists()?"S":"N"));
 			}
 		}
+		csv.append("\n");
 		}catch (Exception e) {
 			LOGGER.error("ERRO AO TENTAR VALIDAR OS TIPOS txt e hocr no diretório:" + diretorio);
 		}

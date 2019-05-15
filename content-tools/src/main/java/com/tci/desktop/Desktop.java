@@ -61,18 +61,26 @@ public class Desktop extends JFrame {
 	private JButton btnTifTxtOCr = new JButton("Contém Txt/Hocr?");
 	public Desktop() {
 		setTitle("Content Tools - Porta OCR Processor: " + ContentTools.OCR_PROCESSOR_PORT);
-		textDir.setFont(new Font("Arial", Font.PLAIN, 12));
+		textDir.setFont(new Font("Arial", Font.PLAIN, 11));
 		textDir.setLineWrap(true);
 		textDir.setWrapStyleWord(true);
 		textLogs.setLineWrap(true);
 		textLogs.setWrapStyleWord(true);
 		textLogs.setFont(new Font("Arial", Font.PLAIN, 12));
+		
+		JPanel pnlDir = new JPanel(new BorderLayout());
+		pnlDir.setBorder(new TitledBorder(null, "Lista de Diret\u00F3rios", TitledBorder.LEADING, TitledBorder.TOP, null, Color.BLUE));
+		
+		JPanel pnlLog = new JPanel(new BorderLayout());
+		pnlLog.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Log da opera\u00E7\u00E3o", TitledBorder.LEADING, TitledBorder.TOP, null, Color.RED));
 		JScrollPane scrollDir = new JScrollPane();
 		scrollDir.setViewportView(textDir);
 		JScrollPane scrollLogs = new JScrollPane();
 		scrollLogs.setViewportView(textLogs);
+		pnlDir.add(scrollDir,BorderLayout.CENTER);
+		pnlLog.add(scrollLogs,BorderLayout.CENTER);
 		
-		JSplitPane split = new JSplitPane(SwingConstants.VERTICAL, scrollDir, scrollLogs); 
+		JSplitPane split = new JSplitPane(SwingConstants.VERTICAL, pnlDir, pnlLog); 
 		split.setOneTouchExpandable(true);
 		split.setDividerLocation(0.5);
 		split.setResizeWeight(0.5);
@@ -107,7 +115,7 @@ public class Desktop extends JFrame {
 		
 		btnValidaOcr.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				validarOcr();
+				validarExisteOcr();
 			}
 		});
 		btnCsvXDiretorio.addActionListener(new ActionListener() {
@@ -146,10 +154,48 @@ public class Desktop extends JFrame {
 		btnCsvXDiretorio.setEnabled(!processando);
 		btnGerarTxtHocr.setEnabled(!processando);
 		btnGerarOcrzip.setEnabled(!processando);
+		btnTifTxtOCr.setEnabled(!processando);
+		
 		loding.exibir(processando);
 		if(!processando) {
 			JOptionPane.showMessageDialog(null, "PROCESSO FINALIZADO");
 		}
+	}
+	
+	private void validarExisteOcr() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					String[] diretorios = textDir.getText().split("\\n");
+					boolean arvore=diretorios.length==1;
+					if(arvore)
+						JOptionPane.showMessageDialog(null, "Você só informou um diretório, o processo será executado em toda árvore","Atenção",JOptionPane.WARNING_MESSAGE);
+						textLogs.setText("");
+						if (JOptionPane.showConfirmDialog(null, "Esta rotina valida a existência dos arquivos OCR.zip, deseja prosseguir?",
+								"ALERTA", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+							procesando(true);
+						textLogs.setText("");
+						procesando(true);
+						for (int i = 0; i < diretorios.length; i++) {
+							String var = diretorios[i];
+							var = detalhe.processaOcrZip(arvore, var);
+							if(var!=null && var.trim().length() >0)
+								textLogs.append(var + "\n");
+						}
+						new FileWritterUtil().writer("OCR_SCAN.csv", textLogs.getText().toString());
+						LOGGER.info("FIM DO PROCESSO");
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					LOGGER.error(e.getMessage());
+				}finally {
+					procesando(false);
+				}
+
+			}
+		}).start();
+
 	}
 	private void contemTxtHocr() {
 		new Thread(new Runnable() {
@@ -299,33 +345,7 @@ public class Desktop extends JFrame {
 		}).start();
 		
 	}
-	private void validarOcr() {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					textLogs.setText("");
-					procesando(true);
-					String[] scanDiretorios = textDir.getText().split("\\n");
-					for (int i = 0; i < scanDiretorios.length; i++) {
-						String var = scanDiretorios[i];
-						var = detalhe.processaOcrZip(var);
-						if(var!=null && var.trim().length() >0)
-							textLogs.append(var + "\n");
-					}
-					new FileWritterUtil().writer("OCR_SCAN.csv", textLogs.getText().toString());
-					LOGGER.info("FIM DO PROCESSO");
-				} catch (Exception e) {
-					e.printStackTrace();
-					LOGGER.error(e.getMessage());
-				}finally {
-					procesando(false);
-				}
-
-			}
-		}).start();
-
-	}
+	
 	private void removerImagens() {
 		new Thread(new Runnable() {
 			@Override
