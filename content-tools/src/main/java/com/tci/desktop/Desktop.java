@@ -10,9 +10,12 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -58,7 +61,8 @@ public class Desktop extends JFrame {
 	private Loading loding=new Loading();
 	private JButton btnGerarTxtHocr = new JButton("Gerar TXT e HOCR");
 	private JButton btnGerarOcrzip = new JButton("Gerar OCR.zip");
-	private JButton btnTifTxtOCr = new JButton("Scan Imagens?");
+	private JButton btnScanDiretorios = new JButton("Diretório Scan");
+	private DateFormat df = new SimpleDateFormat("ddHHmmss");
 	public Desktop() {
 		setTitle("Content Tools - Porta OCR Processor: " + ContentTools.OCR_PROCESSOR_PORT);
 		textDir.setFont(new Font("Arial", Font.PLAIN, 11));
@@ -102,20 +106,20 @@ public class Desktop extends JFrame {
 			}
 		});
 		
-		pAcoes.add(btnCsvXDiretorio);
 		pAcoes.add(btnValidaOcr);
-		pAcoes.add(btnConverter);
-		pAcoes.add(btnRemoverImagem);
+		pAcoes.add(btnScanDiretorios);
+		pAcoes.add(btnCsvXDiretorio);
 		pAcoes.add(btnGerarTxtHocr);
 		pAcoes.add(btnGerarOcrzip);
-		pAcoes.add(btnTifTxtOCr);
+		pAcoes.add(btnConverter);
+		pAcoes.add(btnRemoverImagem);
 		pAcoes.add(loding);
 		
 		content.add(pAcoes,BorderLayout.SOUTH);
 		
 		btnValidaOcr.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				validarExisteOcr();
+				existeOcrZip();
 			}
 		});
 		btnCsvXDiretorio.addActionListener(new ActionListener() {
@@ -140,7 +144,7 @@ public class Desktop extends JFrame {
 				gerarOcrZip();
 			}
 		});
-		btnTifTxtOCr.addActionListener(new ActionListener() {
+		btnScanDiretorios.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				contemTxtHocr();
 			}
@@ -151,11 +155,11 @@ public class Desktop extends JFrame {
 		
 		btnConverter.setEnabled(!processando);
 		btnValidaOcr.setEnabled(!processando);
+		btnScanDiretorios.setEnabled(!processando);
 		btnRemoverImagem.setEnabled(!processando);
 		btnCsvXDiretorio.setEnabled(!processando);
 		btnGerarTxtHocr.setEnabled(!processando);
 		btnGerarOcrzip.setEnabled(!processando);
-		btnTifTxtOCr.setEnabled(!processando);
 		
 		loding.exibir(processando);
 		if(!processando) {
@@ -164,7 +168,7 @@ public class Desktop extends JFrame {
 		}
 	}
 	
-	private void validarExisteOcr() {
+	private void existeOcrZip() {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -181,11 +185,11 @@ public class Desktop extends JFrame {
 						procesando(true);
 						for (int i = 0; i < diretorios.length; i++) {
 							String var = diretorios[i];
-							var = detalhe.processaOcrZip(arvore, var);
+							var = detalhe.existeOcrZip(arvore, var);
 							if(var!=null && var.trim().length() >0)
 								textLogs.append(var + "\n");
 						}
-						new FileWritterUtil().writer("OCR_SCAN.csv", textLogs.getText().toString());
+						new FileWritterUtil().writer("EXISTE_OCR_SCAN.csv", textLogs.getText().toString());
 						LOGGER.info("FIM DO PROCESSO");
 					}
 				} catch (Exception e) {
@@ -224,7 +228,7 @@ public class Desktop extends JFrame {
 							LOGGER.info(log);
 						}
 						LOGGER.info("FIM DO PROCESSO DE GERAÇÃO DE OCR.zip");
-						new FileWritterUtil().writer("DIRETORIO_OCR_TXT_HOCR.csv","DIRETORIO;OCR.zip;ENDERECO;NOME;MB;GB;TXT;HOCR;TIFERRO", csv.toString());
+						new FileWritterUtil().writer(nomeAquivoComHorario("DIRETORIO_OCR_TXT_HOCR_TIFEERO.csv"),"DIRETORIO;OCR.zip;ENDERECO;NOME;MB;GB;TXT;HOCR;TIFERRO", csv.toString());
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -334,7 +338,7 @@ public class Desktop extends JFrame {
 						}
 						textLogs.append(diretorio+"\\"+img +"; ;" + (exists?"S":"N") + "\n");
 					}
-					new FileWritterUtil().writer("CSV_X_DIRETORIO.csv","IMAGEM;DIRETORIO;CSV", textLogs.getText().toString());
+					new FileWritterUtil().writer(nomeAquivoComHorario("CSV_X_DIRETORIO.csv"),"IMAGEM;DIRETORIO;CSV", textLogs.getText().toString());
 					LOGGER.info("FIM DO PROCESSO");
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -411,7 +415,11 @@ public class Desktop extends JFrame {
 		}).start();
 		
 	}
-
+	private String nomeAquivoComHorario(String nome) {
+		String horario = df.format(new Date());
+		return horario + "_"+ nome;
+	}
+	
 	public void exibir() {
 		setSize(1024, 500);
 		setVisible(true);
