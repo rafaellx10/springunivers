@@ -5,6 +5,10 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 
 public class FileWritterUtil {
+	public static final String DIRETORIO_OCR_TXT_HOCR_TIFEERO="DIRETORIO_OCR_TXT_HOCR_TIFEERO.csv";
+	public void writerHeader(String nomeArquivo, String cabecalho) throws Exception{
+		writer(nomeArquivo, cabecalho, "");
+	}
 	public void writer(String nomeArquivo, String conteudo) throws Exception{
 		writer(nomeArquivo, null, conteudo);
 	}
@@ -21,4 +25,5 @@ public class FileWritterUtil {
 			printWriter.close();
 		}
 	}
+	
 }

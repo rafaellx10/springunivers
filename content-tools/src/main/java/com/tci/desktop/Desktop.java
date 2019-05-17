@@ -57,6 +57,7 @@ public class Desktop extends JFrame {
 	private JButton btnConverter = new JButton("Converter Jpg to Tiff");
 	private JButton btnValidaOcr = new JButton("Existe OCR.zip?");
 	private JButton btnRemoverImagem = new JButton("Remover Imagem");
+	private JButton btnRemoverOcrZip = new JButton("Remover OCR.zip");
 	private JButton btnCsvXDiretorio = new JButton("Csv X Diretorio");
 	private Loading loding=new Loading();
 	private JButton btnGerarTxtHocr = new JButton("Gerar TXT e HOCR");
@@ -70,7 +71,7 @@ public class Desktop extends JFrame {
 		textDir.setWrapStyleWord(true);
 		textLogs.setLineWrap(true);
 		textLogs.setWrapStyleWord(true);
-		textLogs.setFont(new Font("Arial", Font.PLAIN, 12));
+		textLogs.setFont(new Font("Arial", Font.PLAIN, 11));
 		
 		JPanel pnlDir = new JPanel(new BorderLayout());
 		pnlDir.setBorder(new TitledBorder(null, "Lista de Diret\u00F3rios", TitledBorder.LEADING, TitledBorder.TOP, null, Color.BLUE));
@@ -88,7 +89,9 @@ public class Desktop extends JFrame {
 		split.setOneTouchExpandable(true);
 		split.setDividerLocation(0.5);
 		split.setResizeWeight(0.5);
-	        
+		split.setDividerSize(15);
+		//split.setResizeWeight(1.0); // equal weights to top and bottom    
+		
 		JPanel content = new JPanel();
 		content.setLayout(new BorderLayout());
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
@@ -112,6 +115,7 @@ public class Desktop extends JFrame {
 		pAcoes.add(btnGerarTxtHocr);
 		pAcoes.add(btnGerarOcrzip);
 		pAcoes.add(btnConverter);
+		pAcoes.add(btnRemoverOcrZip);
 		pAcoes.add(btnRemoverImagem);
 		pAcoes.add(loding);
 		
@@ -132,6 +136,11 @@ public class Desktop extends JFrame {
 				removerImagens();
 			}
 		});
+		btnRemoverOcrZip.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				removerOcrZip();
+			}
+		});
 		
 		btnGerarTxtHocr.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -146,7 +155,7 @@ public class Desktop extends JFrame {
 		});
 		btnScanDiretorios.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				contemTxtHocr();
+				diretorioScan();
 			}
 		});
 		
@@ -160,7 +169,7 @@ public class Desktop extends JFrame {
 		btnCsvXDiretorio.setEnabled(!processando);
 		btnGerarTxtHocr.setEnabled(!processando);
 		btnGerarOcrzip.setEnabled(!processando);
-		
+		btnRemoverOcrZip.setEnabled(!processando);
 		loding.exibir(processando);
 		if(!processando) {
 			detalhe.limparLog();
@@ -185,11 +194,10 @@ public class Desktop extends JFrame {
 						procesando(true);
 						for (int i = 0; i < diretorios.length; i++) {
 							String var = diretorios[i];
-							var = detalhe.existeOcrZip(arvore, var);
-							if(var!=null && var.trim().length() >0)
-								textLogs.append(var + "\n");
+							detalhe.existeOcrZip(arvore, var);
+							textLogs.append(var+"\n");
 						}
-						new FileWritterUtil().writer("EXISTE_OCR_SCAN.csv", textLogs.getText().toString());
+						new FileWritterUtil().writer("EXISTE_OCR_SCAN.csv", detalhe.getLog());
 						LOGGER.info("FIM DO PROCESSO");
 					}
 				} catch (Exception e) {
@@ -203,32 +211,28 @@ public class Desktop extends JFrame {
 		}).start();
 
 	}
-	private void contemTxtHocr() {
+	private void diretorioScan() {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
+					new FileWritterUtil().writerHeader(FileWritterUtil.DIRETORIO_OCR_TXT_HOCR_TIFEERO,"DIRETORIO;OCR.zip;ENDERECO;NOME;MB;GB;TXT;HOCR;TIFERRO");
 					String[] diretorios = textDir.getText().split("\\n");
 					boolean arvore=diretorios.length==1;
 					if(arvore)
 						JOptionPane.showMessageDialog(null, "Você só informou um diretório, o processo será executado em toda árvore","Atenção",JOptionPane.WARNING_MESSAGE);
 					textLogs.setText("");
-					if (JOptionPane.showConfirmDialog(null, "Esta rotina valida a existência dos arquivos OCR.zip, .txt e .hocr, deseja prosseguir?",
+					if (JOptionPane.showConfirmDialog(null, "Esta rotina valida a existência dos arquivos OCR.zip, .txt, .hocr e tif com erro, deseja prosseguir?",
 							"ALERTA", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 						procesando(true);
-						StringBuilder csv=new StringBuilder();
 						for (int i = 0; i < diretorios.length; i++) {
 							String diretorio = diretorios[i];
-							String log="<VALIDANDO EXISTENCIA do OCR.zip, .txt e .hocr> do diretório " + diretorio;
-							textLogs.append(log);
-							LOGGER.info(log);
-							csv.append(detalhe.contemOcrZipTxtHocr(arvore, diretorio));
-							log="\n<FIM VALIDAÇÃO EXISTENCIA do OCR.zip, .txt e .hocr> do diretório" + diretorio + "\n";
+							detalhe.diretorioScan(arvore, diretorio);
+							String log ="<SCAN OCR.zip, .txt, .hocr e tif erro> do diretório " + diretorio+"\n";
 							textLogs.append(log);
 							LOGGER.info(log);
 						}
 						LOGGER.info("FIM DO PROCESSO DE GERAÇÃO DE OCR.zip");
-						new FileWritterUtil().writer(nomeAquivoComHorario("DIRETORIO_OCR_TXT_HOCR_TIFEERO.csv"),"DIRETORIO;OCR.zip;ENDERECO;NOME;MB;GB;TXT;HOCR;TIFERRO", csv.toString());
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -383,6 +387,33 @@ public class Desktop extends JFrame {
 			}
 		}).start();
 	}
+	private void removerOcrZip() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					textLogs.setText("");
+					if (JOptionPane.showConfirmDialog(null, "Esta rotina rotina remove os arquivos ocr.zip, deseja prosseguir? ",
+							"ALERTA", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+						procesando(true);
+						String[] diretorios = textDir.getText().split("\\n");
+						for (int i = 0; i < diretorios.length; i++) {
+							String diretorio = diretorios[i];
+							textLogs.append(detalhe.removerOcrZip(diretorio));
+						}
+						textLogs.append("\nFINALIZADO");
+						LOGGER.info("FIM DO PROCESSO");
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					LOGGER.error(e.getMessage());
+				}finally {
+					procesando(false);
+				}
+
+			}
+		}).start();
+	}
 	private void converter() {
 		new Thread(new Runnable() {
 			@Override
@@ -421,7 +452,7 @@ public class Desktop extends JFrame {
 	}
 	
 	public void exibir() {
-		setSize(1024, 500);
+		setSize(1200, 600);
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);

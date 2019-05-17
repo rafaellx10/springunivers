@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.tci.model.Diretorio;
+import com.tci.util.FileWritterUtil;
 
 @Component
 public class DiretorioDetalhe {
@@ -17,6 +18,9 @@ public class DiretorioDetalhe {
 	private StringBuilder log = new StringBuilder();
 	public void limparLog() {
 		log = new StringBuilder();
+	}
+	public String getLog() {
+		return log.toString();
 	}
 	public String existeOcrZip(boolean arvore,String diretorio) {
 		String log="";
@@ -36,39 +40,49 @@ public class DiretorioDetalhe {
 	}
 	public String removerOcrZip(String diretorio) {
 		File file = new File(diretorio,"OCR.zip");
-		if(file.exists())
+		if(file.exists()) {
 			file.delete();
 			LOGGER.warn("<REMOVIDO OCR.zip> " + file.getAbsolutePath() + " " + file.length() + "bytes");
+		}
 		return file.getAbsolutePath() + " REMOVIDO ";
 	}
 	private String existeOcrZip(String diretorio) {
-		if(diretorioFinal(new File(diretorio))) {
-			Diretorio ocr = contemOcrZip(new Diretorio(diretorio));
-			String scan = diretorio+";"+ocr.getContemOcrZip()+"\n";
-			return scan ;
-		}else return null;
+		try {
+			if(diretorioFinal(new File(diretorio))) {
+				Diretorio ocr = contemOcrZip(new Diretorio(diretorio));
+				String scan = diretorio+";"+ocr.getContemOcrZip()+"\n";
+				LOGGER.warn("<ANALISANO OCR.zip> em" + diretorio);
+				return scan ;
+			}else return null;
+		}catch (Exception e) {
+			LOGGER.error("<ERRO - ANALISE OCR.zip> em" + diretorio);
+			return null;
+		}
 	}
 	
 	public boolean diretorioFinal(File dir) {
 		return dir.isDirectory() &&  dir.listFiles()[0].isFile();
 	}
-	public String contemOcrZipTxtHocr(boolean arvore,String diretorio) {
+	public void diretorioScan(boolean arvore,String diretorio) {
 		String log="";
-		if(arvore) {
-			File[] dirs = new File(diretorio).listFiles();
-			for (File dir : dirs) {
-				if(dir.isDirectory()) {
-					contemOcrZipTxtHocr(true, dir.getAbsolutePath());
+		try {
+			if(arvore) {
+				File[] dirs = new File(diretorio).listFiles();
+				for (File dir : dirs) {
+					if(dir.isDirectory()) {
+						diretorioScan(true, dir.getAbsolutePath());
+					}
 				}
-			}
-			log=contemOcrZipTxtHocr(diretorio);
-		}else
-			log=contemOcrZipTxtHocr(diretorio);
-		if(log!=null)
-			this.log.append(log);
-		return this.log.toString();
+				log=diretorioScan(diretorio);
+			}else
+				log=diretorioScan(diretorio);
+			if(log!=null)
+				new FileWritterUtil().writer(FileWritterUtil.DIRETORIO_OCR_TXT_HOCR_TIFEERO,log);
+		}catch (Exception e) {
+			LOGGER.error("<ERRO> AO PROCESSAR O <SCAN DIR> NO DIRETORIO: " + diretorio);
+		}
 	}
-	private String contemOcrZipTxtHocr(String diretorio) {
+	private String diretorioScan(String diretorio) {
 		if(diretorioFinal(new File(diretorio))) {
 			Diretorio dir = contemOcrZip(new Diretorio(diretorio));
 			StringBuilder csv = new StringBuilder(dir.getNome()+";"+dir.getContemOcrZip());
@@ -81,6 +95,7 @@ public class DiretorioDetalhe {
 					csv.append("\n;;"+file.getParent()+";"+file.getName()+";"+String.format("%.3f",arquivoDetalhe.Mbytes(file.length())) +";"+String.format("%.3f",arquivoDetalhe.Gbytes(file.length())) +";"+ (txt.exists()?"S":"N")+";"+(hocr.exists()?"S":"N")+";"+(arquivoDetalhe.jpgJpegOriginal(file)?"S":"N"));
 				}
 			}
+			LOGGER.info("<SCANDIR> em: " + diretorio);
 			csv.append("\n");
 			}catch (Exception e) {
 				LOGGER.error("ERRO AO TENTAR VALIDAR OS TIPOS txt e hocr no diretório:" + diretorio);
