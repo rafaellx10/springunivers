@@ -4,12 +4,14 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -17,6 +19,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -42,6 +45,11 @@ import com.tci.controller.OcrProcessClient;
 import com.tci.model.Diretorio;
 import com.tci.util.FileWritterUtil;
 
+import ch.qos.logback.core.Layout;
+
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+
 @Component
 public class Desktop extends JFrame {
 	public static List<String> logs = new ArrayList<String>();
@@ -53,6 +61,7 @@ public class Desktop extends JFrame {
 	@Autowired
 	private OcrProcessClient client;
 	private JTextArea textDir = new JTextArea();
+	private JTextArea textLogFile = new JTextArea();
 	private JTextArea textLogs = new JTextArea();
 	private JButton btnConverter = new JButton("Converter Jpg to Tiff");
 	private JButton btnValidaOcr = new JButton("Existe OCR.zip?");
@@ -63,15 +72,36 @@ public class Desktop extends JFrame {
 	private JButton btnGerarTxtHocr = new JButton("Gerar TXT e HOCR");
 	private JButton btnGerarOcrzip = new JButton("Gerar OCR.zip");
 	private JButton btnScanDiretorios = new JButton("Diretório Scan");
+	private JButton btnLerLog = new JButton("Ler Log.log");
+	private JButton btnCancelar = new JButton("Cancelar Processo");
 	private DateFormat df = new SimpleDateFormat("ddHHmmss");
+	private Thread processoAtual;
+	private JPanel pnlLogFile = new JPanel();
+	
+	private JLabel lblLinhaAtual = new JLabel("Linha Inicial");
+	private JTextField txtInicial = new JTextField();
+	private JLabel lblPaginao = new JLabel("Paginação");
+	private JTextField txtPaginacao = new JTextField();
+	
+	private Long inicio=1L;
+	private final JLabel lblIntervalominutos = new JLabel("Intervalo (minutos)");
+	private final JTextField txtIntervaloMinutos = new JTextField();
 	public Desktop() {
+		txtIntervaloMinutos.setColumns(5);
 		setTitle("Content Tools - Porta OCR Processor: " + ContentTools.OCR_PROCESSOR_PORT);
+		txtInicial.setText("1");
+		txtIntervaloMinutos.setText("1");
+		txtPaginacao.setText("100");
 		textDir.setFont(new Font("Arial", Font.PLAIN, 11));
 		textDir.setLineWrap(true);
 		textDir.setWrapStyleWord(true);
 		textLogs.setLineWrap(true);
 		textLogs.setWrapStyleWord(true);
 		textLogs.setFont(new Font("Arial", Font.PLAIN, 11));
+		
+		textLogFile.setFont(new Font("Arial", Font.PLAIN, 11));
+		textLogFile.setLineWrap(true);
+		textLogFile.setWrapStyleWord(true);
 		
 		JPanel pnlDir = new JPanel(new BorderLayout());
 		pnlDir.setBorder(new TitledBorder(null, "Lista de Diret\u00F3rios", TitledBorder.LEADING, TitledBorder.TOP, null, Color.BLUE));
@@ -92,12 +122,12 @@ public class Desktop extends JFrame {
 		split.setDividerSize(15);
 		//split.setResizeWeight(1.0); // equal weights to top and bottom    
 		
-		JPanel content = new JPanel();
-		content.setLayout(new BorderLayout());
+		JPanel pnlContent = new JPanel();
+		pnlContent.setLayout(new BorderLayout());
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		tabbedPane.addTab("Operações: " + ContentTools.OCR_PROCESSOR_PORT, null, content, null);
+		tabbedPane.addTab("Operações: " + ContentTools.OCR_PROCESSOR_PORT, null, pnlContent, null);
 		getContentPane().add(tabbedPane, BorderLayout.CENTER);
-		content.add(split,BorderLayout.CENTER);
+		pnlContent.add(split,BorderLayout.CENTER);
 		
 		JPanel pAcoes = new JPanel();
 		FlowLayout flowLayout = (FlowLayout) pAcoes.getLayout();
@@ -117,10 +147,39 @@ public class Desktop extends JFrame {
 		pAcoes.add(btnConverter);
 		pAcoes.add(btnRemoverOcrZip);
 		pAcoes.add(btnRemoverImagem);
+		pAcoes.add(btnLerLog);
+		pAcoes.add(btnCancelar);
 		pAcoes.add(loding);
 		
-		content.add(pAcoes,BorderLayout.SOUTH);
+		pnlContent.add(pAcoes,BorderLayout.SOUTH);
 		
+		tabbedPane.addTab("Log File", null, pnlLogFile, null);
+		pnlLogFile.setLayout(new BorderLayout(0, 0));
+		
+		txtPaginacao.setColumns(5);
+		txtInicial.setColumns(5);
+		
+		JPanel pnlIntervalo = new JPanel();
+		FlowLayout l = new FlowLayout();
+		l.setAlignment(FlowLayout.LEFT);
+		pnlIntervalo.setLayout(l);
+		
+		pnlIntervalo.add(lblLinhaAtual);
+		pnlIntervalo.add(txtInicial);
+		pnlIntervalo.add(lblPaginao);
+		pnlIntervalo.add(txtPaginacao);
+		
+		JScrollPane scrollLogFile = new JScrollPane();
+		scrollLogFile.setViewportView(textLogFile);
+
+		pnlLogFile.add(pnlIntervalo, BorderLayout.NORTH);
+		
+		pnlIntervalo.add(lblIntervalominutos);
+		
+		pnlIntervalo.add(txtIntervaloMinutos);
+		pnlLogFile.add(scrollLogFile, BorderLayout.CENTER);
+		
+		btnCancelar.setVisible(false);
 		btnValidaOcr.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				existeOcrZip();
@@ -158,18 +217,38 @@ public class Desktop extends JFrame {
 				diretorioScan();
 			}
 		});
-		
+		btnLerLog.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				lerLog();
+			}
+		});
+		btnCancelar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				cancelarProcesso();
+			}
+		});
+	}
+	private void cancelarProcesso() {
+		try {
+			processoAtual.interrupt();
+		}catch (Exception e) {
+			System.out.println(e);
+		}finally {
+			procesando(false);
+		}
 	}
 	private void procesando(boolean processando) {
+		btnCancelar.setVisible(processando);
+		btnLerLog.setVisible(processando);
 		
-		btnConverter.setEnabled(!processando);
-		btnValidaOcr.setEnabled(!processando);
-		btnScanDiretorios.setEnabled(!processando);
-		btnRemoverImagem.setEnabled(!processando);
-		btnCsvXDiretorio.setEnabled(!processando);
-		btnGerarTxtHocr.setEnabled(!processando);
-		btnGerarOcrzip.setEnabled(!processando);
-		btnRemoverOcrZip.setEnabled(!processando);
+		btnConverter.setVisible(!processando);
+		btnValidaOcr.setVisible(!processando);
+		btnScanDiretorios.setVisible(!processando);
+		btnRemoverImagem.setVisible(!processando);
+		btnCsvXDiretorio.setVisible(!processando);
+		btnGerarTxtHocr.setVisible(!processando);
+		btnGerarOcrzip.setVisible(!processando);
+		btnRemoverOcrZip.setVisible(!processando);
 		loding.exibir(processando);
 		if(!processando) {
 			detalhe.limparLog();
@@ -178,7 +257,7 @@ public class Desktop extends JFrame {
 	}
 	
 	private void existeOcrZip() {
-		new Thread(new Runnable() {
+		processoAtual= new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
@@ -208,15 +287,16 @@ public class Desktop extends JFrame {
 				}
 
 			}
-		}).start();
+		});
+		processoAtual.start();
 
 	}
 	private void diretorioScan() {
-		new Thread(new Runnable() {
+		processoAtual=new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
-					new FileWritterUtil().writerHeader(FileWritterUtil.DIRETORIO_OCR_TXT_HOCR_TIFEERO,"DIRETORIO;OCR.zip;ENDERECO;NOME;MB;GB;TXT;HOCR;TIFERRO");
+					new FileWritterUtil().writerHeader(FileWritterUtil.DIRETORIO_OCR_TXT_HOCR_TIFEERO,"DIRETORIO;OCR.zip;ENDERECO;NOME;MB;GB;TXT;HOCR;TIFERRO;ACAO;ITEM");
 					String[] diretorios = textDir.getText().split("\\n");
 					boolean arvore=diretorios.length==1;
 					if(arvore)
@@ -242,10 +322,11 @@ public class Desktop extends JFrame {
 				}
 
 			}
-		}).start();
+		});
+		processoAtual.start();
 	}
 	private void gerarOcrZip() {
-		new Thread(new Runnable() {
+		processoAtual= new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
@@ -275,12 +356,13 @@ public class Desktop extends JFrame {
 				}
 
 			}
-		}).start();
+		});
+		processoAtual.start();
 	}
 	private void gerarTxtHocr() {
 		//log=\\BPOCSCOCR05\logs$\DNIT-DF
 		//\\172.20.0.15\f$\Data\Shares\Projetos\dnit_df\tcibpo-bureau-itinerante-dnit2\2018\09\05\2785
-		new Thread(new Runnable() {
+		processoAtual= new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
@@ -310,10 +392,11 @@ public class Desktop extends JFrame {
 				}
 
 			}
-		}).start();
+		});
+		processoAtual.start();
 	}
 	private void csvVersusDiretorio() {
-		new Thread(new Runnable() {
+		processoAtual= new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
@@ -352,12 +435,13 @@ public class Desktop extends JFrame {
 				}
 
 			}
-		}).start();
+		});
+		processoAtual.start();
 		
 	}
 	
 	private void removerImagens() {
-		new Thread(new Runnable() {
+		processoAtual =  new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
@@ -385,10 +469,11 @@ public class Desktop extends JFrame {
 				}
 
 			}
-		}).start();
+		});
+		processoAtual.start();
 	}
 	private void removerOcrZip() {
-		new Thread(new Runnable() {
+		processoAtual= new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
@@ -412,10 +497,11 @@ public class Desktop extends JFrame {
 				}
 
 			}
-		}).start();
+		});
+		processoAtual.start();
 	}
 	private void converter() {
-		new Thread(new Runnable() {
+		processoAtual = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
@@ -443,7 +529,42 @@ public class Desktop extends JFrame {
 				}
 
 			}
-		}).start();
+		});
+		processoAtual.start();
+		
+	}
+	private void lerLog() {
+		processoAtual = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					try {
+						inicio = Long.valueOf(txtInicial.getText());
+						int limit = Integer.valueOf(txtPaginacao.getText());
+						int sleep = Integer.valueOf(txtIntervaloMinutos.getText());
+						textLogFile.setText("");
+						try (BufferedReader reader = Files.newBufferedReader(
+						        Paths.get(ContentTools.APP_PATH +"\\logs","log.log"), StandardCharsets.UTF_8)) {
+						    List<String> line = reader.lines()
+						                              .skip(inicio)
+						                              .limit(limit)
+						                              .collect(Collectors.toList());
+
+						    line.stream().forEach(l->{textLogFile.append(inicio++ +"--" +l+"\n");});
+						    Thread.sleep(1000L*60*sleep);
+						}
+						txtInicial.setText(inicio.toString());
+					} catch (Exception e) {
+						e.printStackTrace();
+						LOGGER.error(e.getMessage());
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					LOGGER.error(e.getMessage());
+				}
+			}
+		});
+		processoAtual.start();
 		
 	}
 	private String nomeAquivoComHorario(String nome) {
