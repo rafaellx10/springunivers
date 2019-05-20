@@ -98,10 +98,9 @@ public class DiretorioDetalhe {
 						boolean ocrZip = contmTxt && contemHocr;
 						String acao =dirComOcr && (!contemHocr) ?"OK":(dirComOcr &&contemHocr?"REVISAR OCR.zip":( ocrZip?"GERAR OCR.zip":"GERAR txt e hocr"));
 						csv.append(";;"+file.getParent()+";"+file.getName()+";"+String.format("%.3f",arquivoDetalhe.Mbytes(file.length())) +";"+String.format("%.3f",arquivoDetalhe.Gbytes(file.length())) +";"+ simNao(contmTxt)+";"+simNao(contemHocr)+";"+(arquivoDetalhe.jpgJpegOriginal(file)?"S":"N")+";"+acao+";1\n");
+					}
 				}
-				//csv.append("\n");
-			}
-				LOGGER.info("<SCANDIR> em: " + diretorio);
+			LOGGER.info("<SCANDIR> em: " + diretorio);
 			}catch (Exception e) {
 				LOGGER.error("ERRO AO TENTAR VALIDAR OS TIPOS txt e hocr no diretório:" + diretorio);
 			}
