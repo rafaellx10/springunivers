@@ -85,23 +85,22 @@ public class DiretorioDetalhe {
 	private String diretorioScan(String diretorio) {
 		if(diretorioFinal(new File(diretorio))) {
 			Diretorio dir = contemOcrZip(new Diretorio(diretorio));
-			StringBuilder csv = new StringBuilder(dir.getNome()+";"+dir.getContemOcrZip());
+			StringBuilder csv = new StringBuilder(dir.getNome()+";"+dir.getContemOcrZip()+"\n");
 			File[] files = dir.getEndereco().listFiles();
 			try {
-				if(!dir.getContemOcrZip().equals("S")) {
-					for(File file: files) {
-						if(arquivoDetalhe.isTif(file) || arquivoDetalhe.jpgJpegOriginal(file)) {
-							File txt = new File(diretorio, file.getName().replaceAll("tif", "txt"));
-							File hocr = new File(diretorio, file.getName().replaceAll("tif", "hocr"));
-							boolean bTxt = txt.exists();
-							boolean bHocr=hocr.exists();
-							boolean ocrZip = bTxt && bHocr;
-							String acao = ocrZip?"GERAR OCR.zip":"GERAR txt e hocr";
-							csv.append("\n;;"+file.getParent()+";"+file.getName()+";"+String.format("%.3f",arquivoDetalhe.Mbytes(file.length())) +";"+String.format("%.3f",arquivoDetalhe.Gbytes(file.length())) +";"+ simNao(bTxt)+";"+simNao(bHocr)+";"+(arquivoDetalhe.jpgJpegOriginal(file)?"S":"N")+";"+acao+";1");
-						}
-					}
-					csv.append("\n");
+				boolean dirComOcr = dir.getContemOcrZip().equals("S");
+				for(File file: files) {
+					if(arquivoDetalhe.isTif(file) || arquivoDetalhe.jpgJpegOriginal(file)) {
+						File txt = new File(diretorio, file.getName().replaceAll("tif", "txt"));
+						File hocr = new File(diretorio, file.getName().replaceAll("tif", "hocr"));
+						boolean contmTxt = txt.exists();
+						boolean contemHocr=hocr.exists();
+						boolean ocrZip = contmTxt && contemHocr;
+						String acao =dirComOcr && (!contemHocr) ?"OK":(dirComOcr &&contemHocr?"REVISAR OCR.zip":( ocrZip?"GERAR OCR.zip":"GERAR txt e hocr"));
+						csv.append(";;"+file.getParent()+";"+file.getName()+";"+String.format("%.3f",arquivoDetalhe.Mbytes(file.length())) +";"+String.format("%.3f",arquivoDetalhe.Gbytes(file.length())) +";"+ simNao(contmTxt)+";"+simNao(contemHocr)+";"+(arquivoDetalhe.jpgJpegOriginal(file)?"S":"N")+";"+acao+";1\n");
 				}
+				//csv.append("\n");
+			}
 				LOGGER.info("<SCANDIR> em: " + diretorio);
 			}catch (Exception e) {
 				LOGGER.error("ERRO AO TENTAR VALIDAR OS TIPOS txt e hocr no diretório:" + diretorio);

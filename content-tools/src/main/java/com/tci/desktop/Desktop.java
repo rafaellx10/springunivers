@@ -72,10 +72,12 @@ public class Desktop extends JFrame {
 	private JButton btnGerarTxtHocr = new JButton("Gerar TXT e HOCR");
 	private JButton btnGerarOcrzip = new JButton("Gerar OCR.zip");
 	private JButton btnScanDiretorios = new JButton("Diretório Scan");
-	private JButton btnLerLog = new JButton("Ler Log.log");
+	private JButton btnLerLog = new JButton("Start LOG");
 	private JButton btnCancelar = new JButton("Cancelar Processo");
 	private DateFormat df = new SimpleDateFormat("ddHHmmss");
 	private Thread processoAtual;
+	private Thread processoLog;
+
 	private JPanel pnlLogFile = new JPanel();
 	
 	private JLabel lblLinhaAtual = new JLabel("Linha Inicial");
@@ -84,13 +86,15 @@ public class Desktop extends JFrame {
 	private JTextField txtPaginacao = new JTextField();
 	
 	private Long inicio=1L;
-	private final JLabel lblIntervalominutos = new JLabel("Intervalo (minutos)");
-	private final JTextField txtIntervaloMinutos = new JTextField();
+	private final JLabel lblIntervaloSegundos = new JLabel("Intervalo (segundos)");
+	private final JTextField txtIntervaloSegundos = new JTextField();
+	
+	private JTabbedPane tabbedPane;
 	public Desktop() {
-		txtIntervaloMinutos.setColumns(5);
+		txtIntervaloSegundos.setColumns(5);
 		setTitle("Content Tools - Porta OCR Processor: " + ContentTools.OCR_PROCESSOR_PORT);
 		txtInicial.setText("1");
-		txtIntervaloMinutos.setText("1");
+		txtIntervaloSegundos.setText("60");
 		txtPaginacao.setText("100");
 		textDir.setFont(new Font("Arial", Font.PLAIN, 11));
 		textDir.setLineWrap(true);
@@ -99,7 +103,7 @@ public class Desktop extends JFrame {
 		textLogs.setWrapStyleWord(true);
 		textLogs.setFont(new Font("Arial", Font.PLAIN, 11));
 		
-		textLogFile.setFont(new Font("Arial", Font.PLAIN, 11));
+		textLogFile.setFont(new Font("Arial", Font.PLAIN, 10));
 		textLogFile.setLineWrap(true);
 		textLogFile.setWrapStyleWord(true);
 		
@@ -124,7 +128,7 @@ public class Desktop extends JFrame {
 		
 		JPanel pnlContent = new JPanel();
 		pnlContent.setLayout(new BorderLayout());
-		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPane.addTab("Operações: " + ContentTools.OCR_PROCESSOR_PORT, null, pnlContent, null);
 		getContentPane().add(tabbedPane, BorderLayout.CENTER);
 		pnlContent.add(split,BorderLayout.CENTER);
@@ -174,9 +178,9 @@ public class Desktop extends JFrame {
 
 		pnlLogFile.add(pnlIntervalo, BorderLayout.NORTH);
 		
-		pnlIntervalo.add(lblIntervalominutos);
+		pnlIntervalo.add(lblIntervaloSegundos);
 		
-		pnlIntervalo.add(txtIntervaloMinutos);
+		pnlIntervalo.add(txtIntervaloSegundos);
 		pnlLogFile.add(scrollLogFile, BorderLayout.CENTER);
 		
 		btnCancelar.setVisible(false);
@@ -501,7 +505,7 @@ public class Desktop extends JFrame {
 		processoAtual.start();
 	}
 	private void converter() {
-		processoAtual = new Thread(new Runnable() {
+		processoAtual =new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
@@ -534,37 +538,49 @@ public class Desktop extends JFrame {
 		
 	}
 	private void lerLog() {
-		processoAtual = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
+		if(processoLog==null) {
+			btnLerLog.setText("Stop LOG");
+			tabbedPane.setSelectedIndex(1);
+			processoLog= new Thread(new Runnable() {
+				@Override
+				public void run() {
 					try {
-						inicio = Long.valueOf(txtInicial.getText());
-						int limit = Integer.valueOf(txtPaginacao.getText());
-						int sleep = Integer.valueOf(txtIntervaloMinutos.getText());
-						textLogFile.setText("");
-						try (BufferedReader reader = Files.newBufferedReader(
-						        Paths.get(ContentTools.APP_PATH +"\\logs","log.log"), StandardCharsets.UTF_8)) {
-						    List<String> line = reader.lines()
-						                              .skip(inicio)
-						                              .limit(limit)
-						                              .collect(Collectors.toList());
-
-						    line.stream().forEach(l->{textLogFile.append(inicio++ +"--" +l+"\n");});
-						    Thread.sleep(1000L*60*sleep);
+						try {
+							while(true) {
+								inicio = Long.valueOf(txtInicial.getText());
+								int limit = Integer.valueOf(txtPaginacao.getText());
+								int sleep = Integer.valueOf(txtIntervaloSegundos.getText());
+								LOGGER.info("Lendo log.log inicio {} limit {}", inicio,limit);
+								textLogFile.setText("");
+								try (BufferedReader reader = Files.newBufferedReader(
+								        Paths.get(ContentTools.APP_PATH +"\\logs","log.log"), StandardCharsets.UTF_8)) {
+								    List<String> line = reader.lines()
+								                              .skip(inicio)
+								                              .limit(limit)
+								                              .collect(Collectors.toList());
+		
+								    line.stream().forEach(l->{textLogFile.append(inicio++ +"--" +l+"\n");});
+								    Thread.sleep(1000L*sleep);
+								}
+								txtInicial.setText(inicio.toString());
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+							LOGGER.error(e.getMessage());
 						}
-						txtInicial.setText(inicio.toString());
 					} catch (Exception e) {
 						e.printStackTrace();
 						LOGGER.error(e.getMessage());
 					}
-				} catch (Exception e) {
-					e.printStackTrace();
-					LOGGER.error(e.getMessage());
 				}
-			}
-		});
-		processoAtual.start();
+			});
+			processoLog.start();
+		}else {
+			btnLerLog.setText("Start LOG");
+			processoLog.interrupt();
+			processoLog=null;
+		}
+		
 		
 	}
 	private String nomeAquivoComHorario(String nome) {
