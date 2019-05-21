@@ -1,9 +1,9 @@
 package com.springunivers.start;
 
 import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,25 +18,21 @@ public class AgendaV1Programa {
 	private ContatoRepository repositroy;
 	@Autowired
 	private ContatoDao dao;
-	private Contato criarContato() {
-		Contato contato = new Contato();
-		contato.setNome("RAIANE");
-		contato.setSobrenome("OLIVEIRA");
-		contato.setDdd(11);
-		contato.setNumero(455696654L);
-		contato.setCidade("PARNAIBA");
-		contato.setEstado("PI");
-		return contato;
+	public void salvarContatoDao(Contato contato) {
+		Contato find = dao.buscarPorNome(contato.getNome());
+		if(find!=null) {
+			contato.setId(find.getId());
+			dao.alterar(contato);
+		}else
+			dao.incluir(contato);
+			
 	}
-	public void incluirContato() {
-		String nome="GLEYSON";
-		if(repositroy.findByNome(nome)==null) {
-			Contato contato = criarContato();
-			contato.setNome(nome);
+	public void salvarContatoRepository(Contato contato) {
+		if(repositroy.findByNome(contato.getNome())==null) {
 			repositroy.save(contato);
-			System.out.println("INCLUINDO NOVO USUARIO");
+			logger.info("INCLUINDO NOVO USUARIO");
 		}else {
-			System.out.println("JA TEMOS UM USUARIO NA BASE DE DADOS");
+			logger.info("JA TEMOS UM USUARIO NA BASE DE DADOS");
 		}
 		
 	}
@@ -46,12 +42,11 @@ public class AgendaV1Programa {
 			System.out.println(contato);
 		}
 	}
-	public void imprimirContatosOliveira(){
-		logger.info("TESTE");
-		List<Contato> contatos = repositroy.findBySobrenomeContaining("OLIV");
+	public void imprimirContatosContem(String nome){
+		logger.info("BUSCANDO CONTATOS QUE CONTEM O NOME " + nome );
+		List<Contato> contatos = repositroy.findByNomeContaining(nome);
 		for(Contato contato:contatos) {
 			System.out.println(contato);
 		}
-		
 	}
 }

@@ -5,21 +5,29 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import com.springunivers.model.Contato;
 import com.springunivers.start.AgendaV1Programa;
 
 @SpringBootApplication
 public class AgendaV1Application {
-	public static final String ROOT_PATH=System.getProperty("user.dir");
 	public static void main(String[] args) {
-		System.setProperty("app.home", ROOT_PATH);
 		SpringApplication.run(AgendaV1Application.class, args);
 	}
 	@Bean
 	public CommandLineRunner run(AgendaV1Programa programa) {
 		return args -> {
-			//programa.incluirContato();
+			Contato contato = new Contato();
+			contato.setNome("RAIANE");
+			contato.setSobrenome("OLIVEIRA");
+			contato.setDdd(11);
+			contato.setNumero(455696654L);
+			contato.setCidade("PARNAIBA");
+			contato.setEstado("PI");
+			
+			programa.salvarContatoDao(contato);
+			//programa.incluirContatoRepository(contato);
 			//programa.imprimirContatos();
-			programa.imprimirContatosOliveira();
+			//programa.imprimirContatosContem("JOSE");
 		};
 	}
 }
