@@ -29,8 +29,10 @@ import com.tci.beans.Sessao;
 
 @Service
 public class WebserviceClient {
-	private File origem = new File("/kodak");
-	private File destino = new File("/kodak/enviados");
+	private File recebidos = new File("/kodak/recebidos");
+	private File enviados = new File("/kodak/enviados");
+	private File rejeitados = new File("/kodak/rejeitados");
+	
 	
 	final String COMPANY_HEADER_TAG_NAME = "X-Company-Token";
 	
@@ -117,35 +119,37 @@ public class WebserviceClient {
 	//https://www.baeldung.com/spring-rest-template-multipart-upload
 	@Scheduled(cron = "${cron}" , zone = TIME_ZONE)
 	public void enviarArquivo() {
+		File file=null;
 		try {
 		if(sessao.isEnviarArquivos()) {
 			sessao.setEnviarArquivos(false);
-			if(!destino.exists())
-				destino.mkdirs();
-			File[] files = origem.listFiles();
+			if(!enviados.exists())
+				enviados.mkdirs();
+			File[] files = recebidos.listFiles();
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-			
 			LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 	        
-			for(File file: files) {
-				if(!file.isDirectory()) {
-					map.add("file", new FileSystemResource(file));
-					map.add("filename", file.getName());
+			for(File in: files) {
+				if(!in.isDirectory()) {
+					file=in;
+					map.add("file", new FileSystemResource(in));
+					map.add("filename", in.getName());
 			        
 			        HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new HttpEntity<>(map, headers);
 			        
 			        ResponseEntity<String> response=getRestTemplate().exchange(getRoot()+"/api/lots/"+sessao.getLoteId()+"/documents", HttpMethod.POST, requestEntity, String.class);
 			        LOGGER.info("response status: " + response.getStatusCode());
 			        LOGGER.info("response body: " + response.getBody());
+			        in.renameTo(new File(enviados,in.getName()));
 				}
 			}
-			
 		}else
 			LOGGER.info("SEM AUTENTICAÇÃO, LOTE NÃO INFORMADO OU AGUARDANDO ENVIO DE IMAGENS");
 		}catch (HttpStatusCodeException  e) {
 			LOGGER.info("response status: " + e.getStatusCode());
 	        LOGGER.info("response body: " + e.getResponseBodyAsString());
+	        file.renameTo(new File(rejeitados,file.getName()));
 		}catch (Exception e) {
 			LOGGER.error("ERRO AO ENVIAR IMAGENS NO LOTE " + sessao.getLoteId() + " " + e.getMessage());
 			e.printStackTrace();
