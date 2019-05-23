@@ -17,6 +17,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import com.tci.ContentTools;
+import com.tci.beans.Ambiente;
 
 @Component
 
@@ -27,6 +28,9 @@ public class OcrProcessClient {
 
 	@Autowired
 	private ArquivoDetalhe detalhe;
+	
+	@Autowired
+	private Ambiente ambiente;
 
 	public void gerarTxtHocr(String diretorio) {
 		List<String> tifs = Arrays.asList(new File(diretorio).list());
@@ -41,8 +45,7 @@ public class OcrProcessClient {
 					map.add("buscaTextual", "true");
 					map.add("pDFPesquisavel", "true");
 					HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new HttpEntity<>(map);
-					String porta = Objects.toString(ContentTools.OCR_PROCESSOR_PORT,"8080");
-					String url="http://localhost:"+porta+"/gera-arquivos";
+					String url="http://localhost:"+ambiente.getOcrProcessorPorta()+"/gera-arquivos";
 					ResponseEntity<String> result = client.exchange(url,
 							HttpMethod.POST, requestEntity, String.class);
 					if (result.getStatusCode().equals(HttpStatus.OK)) {

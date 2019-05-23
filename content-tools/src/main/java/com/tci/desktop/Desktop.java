@@ -39,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.tci.ContentTools;
+import com.tci.beans.Ambiente;
 import com.tci.controller.DiretorioDetalhe;
 import com.tci.controller.Gerenciador;
 import com.tci.controller.OcrProcessClient;
@@ -94,9 +95,10 @@ public class Desktop extends JFrame {
 	private JTabbedPane tabbedPane;
 	@Autowired
 	private WebserviceClient wsClient;
+	@Autowired
+	private Ambiente ambiente;
 	public Desktop() {
 		txtIntervaloSegundos.setColumns(5);
-		setTitle("Content Tools - Porta OCR Processor: " + ContentTools.OCR_PROCESSOR_PORT);
 		txtInicial.setText("1");
 		txtIntervaloSegundos.setText("60");
 		txtPaginacao.setText("100");
@@ -133,7 +135,7 @@ public class Desktop extends JFrame {
 		JPanel pnlContent = new JPanel();
 		pnlContent.setLayout(new BorderLayout());
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		tabbedPane.addTab("Operações: " + ContentTools.OCR_PROCESSOR_PORT, null, pnlContent, null);
+		tabbedPane.addTab("Operações: " , null, pnlContent, null);
 		getContentPane().add(tabbedPane, BorderLayout.CENTER);
 		pnlContent.add(split,BorderLayout.CENTER);
 		
@@ -241,8 +243,16 @@ public class Desktop extends JFrame {
 			}
 		});
 	}
+	public void exibir() {
+		setSize(1200, 600);
+		setVisible(true);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setLocationRelativeTo(null);
+		setTitle("Content Tools - Porta OCR Processor: " + ambiente.getOcrProcessorPorta());
+	}
 	private void uniContent() {
 		FrmLogin frmLogin = new FrmLogin();
+		frmLogin.setApi("API:" + ambiente.getUniprofUrl());
 		frmLogin.setVisible(true);
 		String login=frmLogin.getLogin();
 		String senha = frmLogin.getSenha();
@@ -570,7 +580,7 @@ public class Desktop extends JFrame {
 								LOGGER.info("Lendo log.log inicio {} limit {}", inicio,limit);
 								textLogFile.setText("");
 								try (BufferedReader reader = Files.newBufferedReader(
-								        Paths.get(ContentTools.APP_PATH +"\\logs","log.log"), StandardCharsets.UTF_8)) {
+								        Paths.get(ambiente.getAppPath() +"\\logs","log.log"), StandardCharsets.UTF_8)) {
 								    List<String> line = reader.lines()
 								                              .skip(inicio)
 								                              .limit(limit)
@@ -605,11 +615,6 @@ public class Desktop extends JFrame {
 		return horario + "_"+ nome;
 	}
 	
-	public void exibir() {
-		setSize(1200, 600);
-		setVisible(true);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setLocationRelativeTo(null);
-	}
+	
 
 }

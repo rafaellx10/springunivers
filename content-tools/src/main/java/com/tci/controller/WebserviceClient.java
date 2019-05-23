@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
@@ -15,9 +16,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.tci.beans.Ambiente;
+
 @Service
 public class WebserviceClient {
-	private final String ROOT="https://uniproof-api-stage.herokuapp.com";
+	@Autowired
+	private Ambiente ambiente;
 	private static final Logger LOGGER = LogManager.getLogger(WebserviceClient.class);
 	private RestTemplate getRestTemplate() {
 		RestTemplate restTemplate = new RestTemplate();
@@ -36,7 +40,7 @@ public class WebserviceClient {
 		return restTemplate;
 	}
 	private String getRoot() {
-		return String.format("%s%s", ROOT,"");
+		return String.format("%s%s", ambiente.getUniprofUrl(),"");
 	}
 	public String logar(String login,String senha) {
 		String json=String.format("{\"email\": \"%s\",\"password\": \"%s\"}", login,senha) ;

@@ -15,13 +15,8 @@ import com.tci.desktop.Desktop;
 @EnableScheduling
 public class ContentTools {
 	private static final Logger LOGGER = LogManager.getLogger(ContentTools.class);
-	public static final String APP_PATH = System.getProperty("user.dir");
-	public static String OCR_PROCESSOR_PORT = "ocr-processor-port";
 	private static ConfigurableApplicationContext contexto;
 	public static void main(String[] args) {
-		System.out.println("PORTA OCR PROCESSOR (ocr-processoor-port):" + System.getProperty(OCR_PROCESSOR_PORT));
-		System.setProperty("app.path", APP_PATH);
-		OCR_PROCESSOR_PORT = System.getProperty(OCR_PROCESSOR_PORT);
 		try {
 			String lf = UIManager.getSystemLookAndFeelClassName();
 			UIManager.setLookAndFeel(lf);

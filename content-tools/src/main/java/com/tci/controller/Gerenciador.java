@@ -28,7 +28,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.tci.ContentTools;
+import com.tci.beans.Ambiente;
 import com.tci.model.Diretorio;
 import com.tci.model.Imagem;
 
@@ -37,8 +37,10 @@ public class Gerenciador {
 	private static final Logger LOGGER = LogManager.getLogger(Gerenciador.class);
 	@Autowired
 	private ArquivoDetalhe arquivoDetalhe;
+	@Autowired
+	private Ambiente ambiente;
 	private Map<String,Diretorio> repositorio;
-	private File csvImagemFile = new File(ContentTools.APP_PATH, "REMOVER_IMAGENS_RESUMO.csv");
+	
 	
 	public void criarRepositorio() {
 		repositorio=new HashMap<String,Diretorio>();
@@ -64,6 +66,7 @@ public class Gerenciador {
 		return diretorio.getNome() + " --> Removendo imagens\n";
 	}
 	private void removerImagem(Diretorio diretorio) throws Exception {
+		File csvImagemFile = new File(ambiente.getAppPath(), "REMOVER_IMAGENS_RESUMO.csv");
 		StringBuilder sb = new StringBuilder();
 		if (!csvImagemFile.exists()) {
 			csvImagemFile.createNewFile();
@@ -212,7 +215,7 @@ public class Gerenciador {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
 		StringBuilder sb = new StringBuilder();
 		String resumo = new SimpleDateFormat("yyyyMMdd").format(new Date());
-		File file = new File(ContentTools.APP_PATH, "RESUMO_" + resumo + ".csv");
+		File file = new File(ambiente.getAppPath(), "RESUMO_" + resumo + ".csv");
 		if (!file.exists()) {
 			file.createNewFile();
 			sb.append("DIRETORIO;ARQUIVOS;KB;MB;GB;KB-ATUAL;MB-ATUAL;GB-ATUAL;INICIO;FIM\n");

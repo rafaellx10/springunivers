@@ -9,9 +9,14 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.tci.beans.Ambiente;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-
 public class FrmLogin extends JDialog {
 	private JTextField txtLogin = new JTextField();
 	private JPasswordField txtSenha = new JPasswordField();
@@ -70,7 +75,9 @@ public class FrmLogin extends JDialog {
 		setSize(300, 150);
 		setLocationRelativeTo(null);
 	}
-	
+	public void setApi(String api) {
+		setTitle(api);
+	}
 	public String getLogin() {
 		return txtLogin.getText();
 	}
