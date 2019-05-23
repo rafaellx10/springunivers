@@ -20,6 +20,7 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -142,6 +143,9 @@ public class WebserviceClient {
 			
 		}else
 			LOGGER.info("SEM AUTENTICAÇÃO, LOTE NÃO INFORMADO OU AGUARDANDO ENVIO DE IMAGENS");
+		}catch (HttpStatusCodeException  e) {
+			LOGGER.info("response status: " + e.getStatusCode());
+	        LOGGER.info("response body: " + e.getResponseBodyAsString());
 		}catch (Exception e) {
 			LOGGER.error("ERRO AO ENVIAR IMAGENS NO LOTE " + sessao.getLoteId() + " " + e.getMessage());
 			e.printStackTrace();
