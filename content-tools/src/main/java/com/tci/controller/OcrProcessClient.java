@@ -17,7 +17,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import com.tci.ContentTools;
-import com.tci.beans.Ambiente;
+import com.tci.beans.Sessao;
 
 @Component
 
@@ -30,7 +30,7 @@ public class OcrProcessClient {
 	private ArquivoDetalhe detalhe;
 	
 	@Autowired
-	private Ambiente ambiente;
+	private Sessao ambiente;
 
 	public void gerarTxtHocr(String diretorio) {
 		List<String> tifs = Arrays.asList(new File(diretorio).list());

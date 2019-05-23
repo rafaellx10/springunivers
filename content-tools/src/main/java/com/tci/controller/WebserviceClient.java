@@ -22,12 +22,15 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tci.beans.Ambiente;
+import com.tci.beans.Sessao;
 
 @Service
 public class WebserviceClient {
+	
+	final String COMPANY_HEADER_TAG_NAME = "X-Company-Token";
+	
 	@Autowired
-	private Ambiente ambiente;
+	private Sessao sessao;
 	private static final Logger LOGGER = LogManager.getLogger(WebserviceClient.class);
 	@Autowired
 	private ObjectMapper mapper;
@@ -36,10 +39,11 @@ public class WebserviceClient {
 		restTemplate.getInterceptors().add(new ClientHttpRequestInterceptor() {
 			@Override
 			public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)throws IOException {
-				String token = getToken();
+				String token=sessao.getLoginToken();
 				if (token!=null && !token.trim().isEmpty() ) {
 					System.out.println("token-->" + token);
 					request.getHeaders().set("Authorization",token);
+					request.getHeaders().set(COMPANY_HEADER_TAG_NAME,sessao.getCompanyToken());
 				}
 
 				return execution.execute(request, body);
@@ -48,7 +52,7 @@ public class WebserviceClient {
 		return restTemplate;
 	}
 	private String getRoot() {
-		return String.format("%s%s", ambiente.getUniprofUrl(),"");
+		return String.format("%s%s", sessao.getUniprofUrl(),"");
 	}
 	public void logar(String login,String senha) throws Exception {
 		String post=String.format("{\"email\": \"%s\",\"password\": \"%s\"}", login,senha) ;
@@ -59,24 +63,41 @@ public class WebserviceClient {
 		LOGGER.info("RESPOSTA DO LOGIN --> " + result.toString());
 		JsonNode jsonNode = mapper.readTree(result.toString());
 		String token = jsonNode.get("token").asText();
-		setToken(token);
+		sessao.setLoginToken(token);
+		companyToken();
 	}
-	public void companies() throws Exception {
-		ResponseEntity<List<String>> response = getRestTemplate().exchange(
+	private void companyToken() throws Exception {
+		ResponseEntity<String> response = getRestTemplate().exchange(
 				getRoot()+"/api/companies",
 				  HttpMethod.GET,
 				  null,
-				  new ParameterizedTypeReference<List<String>>(){});
-		List<String> employees = response.getBody();
+				  new ParameterizedTypeReference<String>(){});
+		String result = response.getBody();
+		System.out.println(result);
+		JsonNode jsonNode = mapper.readTree(result.toString());
+		String token = jsonNode.get("name").asText();
+		sessao.setCompanyToken("0d1ed363-0a1f-4efa-a54d-0da15a7c7eb3");
+	}
+	public void listServices() throws Exception {
+		ResponseEntity<String> response = getRestTemplate().exchange(
+				getRoot()+"/api/services",
+				  HttpMethod.GET,
+				  null,
+				  new ParameterizedTypeReference<String>(){});
+		String employees = response.getBody();
 		System.out.println(employees);
+		//44
 	}
-	public void setToken(String token) {
-		System.setProperty("TOKEN", token);
+	public void criarLote(int servico,String nome) {
+		String post=String.format("{\"serviceId\": \"%d\",\"name\":\"%s\",\"description\": \"%s\"}", servico,nome,nome + " descrição") ;
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		HttpEntity<String> entity = new HttpEntity<String>(post,headers);
+		Object result = getRestTemplate().postForObject(getRoot()+"/api/lots", entity, String.class);
+		LOGGER.info("RESPOSTA DO CRIAR LOTE --> " + result.toString());
+		//b3f06264-5bd6-4f44-8eb5-bd55d96d982c
 	}
-	public String getToken() {
-		String token = System.getProperty("TOKEN");
-		return token;
-	}
+	
 	private static final String TIME_ZONE = "America/Sao_Paulo";
 	@Scheduled(cron = "${cron}" , zone = TIME_ZONE)
 	public void enviarArquivo() {

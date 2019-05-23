@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -23,12 +22,14 @@ import java.util.stream.Collectors;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
@@ -36,10 +37,12 @@ import javax.swing.border.TitledBorder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.tci.ContentTools;
-import com.tci.beans.Ambiente;
+import com.tci.beans.Sessao;
 import com.tci.controller.DiretorioDetalhe;
 import com.tci.controller.Gerenciador;
 import com.tci.controller.OcrProcessClient;
@@ -47,12 +50,8 @@ import com.tci.controller.WebserviceClient;
 import com.tci.model.Diretorio;
 import com.tci.util.FileWritterUtil;
 
-import ch.qos.logback.core.Layout;
-
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-
 @Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)	
 public class Desktop extends JFrame {
 	public static List<String> logs = new ArrayList<String>();
 	private static final Logger LOGGER = LogManager.getLogger(Desktop.class);
@@ -96,7 +95,7 @@ public class Desktop extends JFrame {
 	@Autowired
 	private WebserviceClient wsClient;
 	@Autowired
-	private Ambiente ambiente;
+	private Sessao ambiente;
 	public Desktop() {
 		txtIntervaloSegundos.setColumns(5);
 		txtInicial.setText("1");
@@ -251,18 +250,11 @@ public class Desktop extends JFrame {
 		setTitle("Content Tools - Porta OCR Processor: " + ambiente.getOcrProcessorPorta());
 	}
 	private void uniContent() {
-		try {
-			FrmLogin frmLogin = new FrmLogin();
-			frmLogin.setApi("API:" + ambiente.getUniprofUrl());
-			frmLogin.setVisible(true);
-			String login=frmLogin.getLogin();
-			String senha = frmLogin.getSenha();
-			wsClient.logar(login, senha);
-			wsClient.companies();
-		}catch (Exception e) {
-			JOptionPane.showMessageDialog(null, e.getMessage(),"Erro",JOptionPane.ERROR_MESSAGE);
-			LOGGER.error(e);
-		}
+	
+		FrmLogin frmLogin = ContentTools.getBean(FrmLogin.class);
+		frmLogin.setApi("API:" + ambiente.getUniprofUrl());
+		frmLogin.setVisible(true);
+	
 	}
 	
 	private void cancelarProcesso() {

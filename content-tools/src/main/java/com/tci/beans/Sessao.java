@@ -4,13 +4,46 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Ambiente {
+public class Sessao {
 	@Value("${user.dir}")
 	private String appPath;
 	@Value("${app.uniprof.url:https://uniproof-api-stage.herokuapp.com}")
 	private String uniprofUrl;
 	@Value("${app.ocrprocessor.porta:8181}")
 	private String ocrProcessorPorta;
+	
+	private String loginToken;
+	private String companyToken;
+	private String serviceId;
+	
+	
+	public String getLoginToken() {
+		return loginToken;
+	}
+	public void setLoginToken(String loginToken) {
+		this.loginToken = loginToken;
+	}
+	public String getCompanyToken() {
+		return companyToken;
+	}
+	public void setCompanyToken(String companyToken) {
+		this.companyToken = companyToken;
+	}
+	public String getServiceId() {
+		return serviceId;
+	}
+	public void setServiceId(String serviceId) {
+		this.serviceId = serviceId;
+	}
+	public String getLoteId() {
+		return loteId;
+	}
+	public void setLoteId(String loteId) {
+		this.loteId = loteId;
+	}
+	private String loteId;
+	
+	
 	public String getAppPath() {
 		return appPath;
 	}

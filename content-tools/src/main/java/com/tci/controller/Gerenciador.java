@@ -28,7 +28,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.tci.beans.Ambiente;
+import com.tci.beans.Sessao;
 import com.tci.model.Diretorio;
 import com.tci.model.Imagem;
 
@@ -38,7 +38,7 @@ public class Gerenciador {
 	@Autowired
 	private ArquivoDetalhe arquivoDetalhe;
 	@Autowired
-	private Ambiente ambiente;
+	private Sessao ambiente;
 	private Map<String,Diretorio> repositorio;
 	
 	
