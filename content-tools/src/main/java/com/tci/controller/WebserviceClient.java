@@ -45,7 +45,7 @@ public class WebserviceClient {
 			public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)throws IOException {
 				String token=sessao.getLoginToken();
 				if (token!=null && !token.trim().isEmpty() ) {
-					System.out.println("token-->" + token);
+					//System.out.println("token-->" + token);
 					request.getHeaders().set("Authorization",token);
 					request.getHeaders().set(COMPANY_HEADER_TAG_NAME,sessao.getCompanyToken());
 				}
@@ -122,12 +122,13 @@ public class WebserviceClient {
 			if(!destino.exists())
 				destino.mkdirs();
 			File[] files = origem.listFiles();
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+			
+			LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+	        
 			for(File file: files) {
-				HttpHeaders headers = new HttpHeaders();
-				headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-				
-				LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-		        map.add("file", file);
+				map.add("file", file);
 		        
 		        HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new HttpEntity<>(map, headers);
 		        
