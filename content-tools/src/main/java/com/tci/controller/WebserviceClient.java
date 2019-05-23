@@ -113,7 +113,7 @@ public class WebserviceClient {
 	}
 	
 	private static final String TIME_ZONE = "America/Sao_Paulo";
-	
+	//https://www.baeldung.com/spring-rest-template-multipart-upload
 	@Scheduled(cron = "${cron}" , zone = TIME_ZONE)
 	public void enviarArquivo() {
 		try {
@@ -128,13 +128,16 @@ public class WebserviceClient {
 			LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 	        
 			for(File file: files) {
-				map.add("file", file);
-		        
-		        HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new HttpEntity<>(map, headers);
-		        
-		        ResponseEntity<String> response=getRestTemplate().exchange(getRoot()+"/api/lots/"+sessao.getLoteId()+"/documents", HttpMethod.POST, requestEntity, String.class);
-		        LOGGER.info("response status: " + response.getStatusCode());
-		        LOGGER.info("response body: " + response.getBody());
+				if(!file.isDirectory()) {
+					map.add("file", new FileSystemResource(file));
+					map.add("filename", file.getName());
+			        
+			        HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new HttpEntity<>(map, headers);
+			        
+			        ResponseEntity<String> response=getRestTemplate().exchange(getRoot()+"/api/lots/"+sessao.getLoteId()+"/documents", HttpMethod.POST, requestEntity, String.class);
+			        LOGGER.info("response status: " + response.getStatusCode());
+			        LOGGER.info("response body: " + response.getBody());
+				}
 			}
 			
 		}else
