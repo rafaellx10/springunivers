@@ -42,6 +42,7 @@ import com.tci.ContentTools;
 import com.tci.controller.DiretorioDetalhe;
 import com.tci.controller.Gerenciador;
 import com.tci.controller.OcrProcessClient;
+import com.tci.controller.WebserviceClient;
 import com.tci.model.Diretorio;
 import com.tci.util.FileWritterUtil;
 
@@ -63,6 +64,7 @@ public class Desktop extends JFrame {
 	private JTextArea textDir = new JTextArea();
 	private JTextArea textLogFile = new JTextArea();
 	private JTextArea textLogs = new JTextArea();
+	private JButton btnUniContent = new JButton("UNI CONTENT");
 	private JButton btnConverter = new JButton("Converter Jpg to Tiff");
 	private JButton btnValidaOcr = new JButton("Existe OCR.zip?");
 	private JButton btnRemoverImagem = new JButton("Remover Imagem");
@@ -86,10 +88,12 @@ public class Desktop extends JFrame {
 	private JTextField txtPaginacao = new JTextField();
 	
 	private Long inicio=1L;
-	private final JLabel lblIntervaloSegundos = new JLabel("Intervalo (segundos)");
-	private final JTextField txtIntervaloSegundos = new JTextField();
+	private JLabel lblIntervaloSegundos = new JLabel("Intervalo (segundos)");
+	private JTextField txtIntervaloSegundos = new JTextField();
 	
 	private JTabbedPane tabbedPane;
+	@Autowired
+	private WebserviceClient wsClient;
 	public Desktop() {
 		txtIntervaloSegundos.setColumns(5);
 		setTitle("Content Tools - Porta OCR Processor: " + ContentTools.OCR_PROCESSOR_PORT);
@@ -142,7 +146,7 @@ public class Desktop extends JFrame {
 				converter();
 			}
 		});
-		
+		pAcoes.add(btnUniContent);
 		pAcoes.add(btnValidaOcr);
 		pAcoes.add(btnScanDiretorios);
 		pAcoes.add(btnCsvXDiretorio);
@@ -231,7 +235,20 @@ public class Desktop extends JFrame {
 				cancelarProcesso();
 			}
 		});
+		btnUniContent.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				uniContent();
+			}
+		});
 	}
+	private void uniContent() {
+		FrmLogin frmLogin = new FrmLogin();
+		frmLogin.setVisible(true);
+		String login=frmLogin.getLogin();
+		String senha = frmLogin.getSenha();
+		
+	}
+	
 	private void cancelarProcesso() {
 		try {
 			processoAtual.interrupt();

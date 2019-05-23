@@ -7,10 +7,12 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.tci.desktop.Desktop;
 
 @SpringBootApplication
+@EnableScheduling
 public class ContentTools {
 	private static final Logger LOGGER = LogManager.getLogger(ContentTools.class);
 	public static final String APP_PATH = System.getProperty("user.dir");
