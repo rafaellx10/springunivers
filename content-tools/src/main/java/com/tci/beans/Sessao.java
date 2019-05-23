@@ -16,6 +16,7 @@ public class Sessao {
 	private String companyToken;
 	private String serviceId;
 	
+	private boolean enviarArquivos;
 	
 	public String getLoginToken() {
 		return loginToken;
@@ -67,7 +68,10 @@ public class Sessao {
 		return "Ambiente [appPath=" + appPath + ", uniprofUrl=" + uniprofUrl + ", ocrProcessorPorta="
 				+ ocrProcessorPorta + "]";
 	}
-	public boolean enviarArquivos() {
+	public boolean isEnviarArquivos() {
 		return loginToken!=null && loteId !=null;
+	}
+	public void setEnviarArquivos(boolean enviarArquivos) {
+		this.enviarArquivos = enviarArquivos;
 	}
 }

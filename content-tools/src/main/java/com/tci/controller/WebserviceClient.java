@@ -1,12 +1,13 @@
 package com.tci.controller;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -18,6 +19,7 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -26,6 +28,8 @@ import com.tci.beans.Sessao;
 
 @Service
 public class WebserviceClient {
+	private File origem = new File("/kodak");
+	private File destino = new File("/kodak/enviados");
 	
 	final String COMPANY_HEADER_TAG_NAME = "X-Company-Token";
 	
@@ -112,9 +116,33 @@ public class WebserviceClient {
 	
 	@Scheduled(cron = "${cron}" , zone = TIME_ZONE)
 	public void enviarArquivo() {
-		if(sessao.enviarArquivos()) {
+		try {
+		if(sessao.isEnviarArquivos()) {
+			sessao.setEnviarArquivos(false);
+			if(!destino.exists())
+				destino.mkdirs();
+			File[] files = origem.listFiles();
+			for(File file: files) {
+				HttpHeaders headers = new HttpHeaders();
+				headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+				
+				LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+		        map.add("file", file);
+		        
+		        HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new HttpEntity<>(map, headers);
+		        
+		        ResponseEntity<String> response=getRestTemplate().exchange(getRoot()+"/api/lots/"+sessao.getLoteId()+"/documents", HttpMethod.POST, requestEntity, String.class);
+		        LOGGER.info("response status: " + response.getStatusCode());
+		        LOGGER.info("response body: " + response.getBody());
+			}
 			
 		}else
-			LOGGER.info("SEM AUTENTICAÇÃO OU LOTE NÃO INFORMADO");
+			LOGGER.info("SEM AUTENTICAÇÃO, LOTE NÃO INFORMADO OU AGUARDANDO ENVIO DE IMAGENS");
+		}catch (Exception e) {
+			LOGGER.error("ERRO AO ENVIAR IMAGENS NO LOTE " + sessao.getLoteId() + " " + e.getMessage());
+			e.printStackTrace();
+		}finally {
+			sessao.setEnviarArquivos(true);
+		}
 	}
 }
