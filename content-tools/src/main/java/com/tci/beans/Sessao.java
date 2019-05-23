@@ -67,5 +67,7 @@ public class Sessao {
 		return "Ambiente [appPath=" + appPath + ", uniprofUrl=" + uniprofUrl + ", ocrProcessorPorta="
 				+ ocrProcessorPorta + "]";
 	}
-	
+	public boolean enviarArquivos() {
+		return loginToken!=null && loteId !=null;
+	}
 }

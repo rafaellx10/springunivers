@@ -23,6 +23,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.tci.ContentTools;
+import com.tci.beans.Sessao;
 import com.tci.controller.WebserviceClient;
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)	
@@ -30,14 +31,20 @@ public class FrmLogin extends JDialog {
 	private static final Logger LOGGER = LogManager.getLogger(FrmLogin.class);
 	@Autowired
 	private WebserviceClient client;
+	@Autowired
+	private Sessao sessao;
+	
 	private JTextField txtLogin = new JTextField();
 	private JPasswordField txtSenha = new JPasswordField();
 	private final JButton cmdLogin = new JButton("Login");
 	private final JPanel panel = new JPanel();
 	private final JTextField txtServio = new JTextField();
 	private final JButton btnCriarLote = new JButton("Criar Lote");
+	private final JTextField txtLote = new JTextField();
 	public FrmLogin() {
-		txtServio.setText("Service");
+		txtLote.setText("b3f06264-5bd6-4f44-8eb5-bd55d96d982c");
+		txtLote.setColumns(27);
+		txtServio.setText("44");
 		txtServio.setColumns(5);
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		getContentPane().setLayout(gridBagLayout);
@@ -89,7 +96,7 @@ public class FrmLogin extends JDialog {
 		});
 		getContentPane().add(cmdLogin, gbc_cmdLogin);
 		setModal(true);
-		setSize(300, 241);
+		setSize(521, 241);
 		setLocationRelativeTo(null);
 		txtLogin.setText("gleyson.sampaio@tcibpo.com");
 		txtSenha.setText("12345678");
@@ -113,16 +120,24 @@ public class FrmLogin extends JDialog {
 		});
 		
 		panel.add(btnCriarLote);
+		
+		panel.add(txtLote);
 	}
 	public void criarLote() {
-		client.criarLote(44, "LOTE TESTE");
+		try {
+			client.criarLote(Integer.valueOf(txtServio.getText()), "LOTE TESTE");
+			txtLote.setText(sessao.getLoteId());
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null,"Erro ao criar lote " +  e.getMessage(),"Erro",JOptionPane.ERROR_MESSAGE);
+			LOGGER.error(e);
+		}
 	}
 	public void login() {
 		try {
 			String login=txtLogin.getText();
 			String senha = txtSenha.getText();
 			client.logar(login, senha);
-			
+			sessao.setLoteId(txtLote.getText());
 		}catch (Exception e) {
 			JOptionPane.showMessageDialog(null, e.getMessage(),"Erro",JOptionPane.ERROR_MESSAGE);
 			LOGGER.error(e);

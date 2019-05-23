@@ -66,6 +66,7 @@ public class WebserviceClient {
 		sessao.setLoginToken(token);
 		companyToken();
 	}
+	//https://stackoverflow.com/questions/6349421/how-to-use-jackson-to-deserialise-an-array-of-objects
 	private void companyToken() throws Exception {
 		ResponseEntity<String> response = getRestTemplate().exchange(
 				getRoot()+"/api/companies",
@@ -74,10 +75,16 @@ public class WebserviceClient {
 				  new ParameterizedTypeReference<String>(){});
 		String result = response.getBody();
 		System.out.println(result);
-		JsonNode jsonNode = mapper.readTree(result.toString());
-		String token = jsonNode.get("name").asText();
-		sessao.setCompanyToken("0d1ed363-0a1f-4efa-a54d-0da15a7c7eb3");
+		JsonNode arrNode = mapper.readTree(result.toString());
+		if (arrNode.isArray()) {
+		    for (final JsonNode objNode : arrNode) {
+		    	sessao.setCompanyToken(objNode.get("token").asText());
+		    	break;
+		    }
+		}
+		
 	}
+	/*
 	public void listServices() throws Exception {
 		ResponseEntity<String> response = getRestTemplate().exchange(
 				getRoot()+"/api/services",
@@ -88,19 +95,26 @@ public class WebserviceClient {
 		System.out.println(employees);
 		//44
 	}
-	public void criarLote(int servico,String nome) {
+	*/
+	public void criarLote(int servico,String nome) throws Exception{
 		String post=String.format("{\"serviceId\": \"%d\",\"name\":\"%s\",\"description\": \"%s\"}", servico,nome,nome + " descrição") ;
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		HttpEntity<String> entity = new HttpEntity<String>(post,headers);
 		Object result = getRestTemplate().postForObject(getRoot()+"/api/lots", entity, String.class);
 		LOGGER.info("RESPOSTA DO CRIAR LOTE --> " + result.toString());
-		//b3f06264-5bd6-4f44-8eb5-bd55d96d982c
+		JsonNode jsonNode = mapper.readTree(result.toString());
+		String id = jsonNode.get("id").asText();
+		sessao.setLoteId(id);
 	}
 	
 	private static final String TIME_ZONE = "America/Sao_Paulo";
+	
 	@Scheduled(cron = "${cron}" , zone = TIME_ZONE)
 	public void enviarArquivo() {
-		LOGGER.info("ENVIANDO IMAGEM");
+		if(sessao.enviarArquivos()) {
+			
+		}else
+			LOGGER.info("SEM AUTENTICAÇÃO OU LOTE NÃO INFORMADO");
 	}
 }

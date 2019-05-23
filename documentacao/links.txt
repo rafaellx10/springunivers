@@ -12,4 +12,4 @@ https://docs.spring.io/spring-data/jpa/docs/current/reference/html/ - 4.1. Core 
 https://blog.caelum.com.br/consultas-fortemente-tipadas-com-jpa/
 http://www.java2s.com/Tutorials/Java/JPA/4520__JPA_Query_Function.htm
 
-@Value("${spring.datasource.url}")
+b3f06264-5bd6-4f44-8eb5-bd55d96d982c
