@@ -251,12 +251,18 @@ public class Desktop extends JFrame {
 		setTitle("Content Tools - Porta OCR Processor: " + ambiente.getOcrProcessorPorta());
 	}
 	private void uniContent() {
-		FrmLogin frmLogin = new FrmLogin();
-		frmLogin.setApi("API:" + ambiente.getUniprofUrl());
-		frmLogin.setVisible(true);
-		String login=frmLogin.getLogin();
-		String senha = frmLogin.getSenha();
-		wsClient.logar(login, senha);
+		try {
+			FrmLogin frmLogin = new FrmLogin();
+			frmLogin.setApi("API:" + ambiente.getUniprofUrl());
+			frmLogin.setVisible(true);
+			String login=frmLogin.getLogin();
+			String senha = frmLogin.getSenha();
+			wsClient.logar(login, senha);
+			wsClient.companies();
+		}catch (Exception e) {
+			JOptionPane.showMessageDialog(null, e.getMessage(),"Erro",JOptionPane.ERROR_MESSAGE);
+			LOGGER.error(e);
+		}
 	}
 	
 	private void cancelarProcesso() {

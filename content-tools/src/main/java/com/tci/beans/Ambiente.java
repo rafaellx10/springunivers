@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 public class Ambiente {
 	@Value("${user.dir}")
 	private String appPath;
-	@Value("${app.uniprof.rrl:https://uniproof-app-stage.netlify.com}")
+	@Value("${app.uniprof.url:https://uniproof-api-stage.herokuapp.com}")
 	private String uniprofUrl;
 	@Value("${app.ocrprocessor.porta:8181}")
 	private String ocrProcessorPorta;
