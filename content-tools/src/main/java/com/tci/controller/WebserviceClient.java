@@ -17,7 +17,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 public class WebserviceClient {
-	private final String ROOT="https://uniproof-app-stage.netlify.com";
+	private final String ROOT="https://uniproof-api-stage.herokuapp.com";
 	private static final Logger LOGGER = LogManager.getLogger(WebserviceClient.class);
 	private RestTemplate getRestTemplate() {
 		RestTemplate restTemplate = new RestTemplate();

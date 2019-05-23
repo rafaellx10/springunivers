@@ -246,7 +246,7 @@ public class Desktop extends JFrame {
 		frmLogin.setVisible(true);
 		String login=frmLogin.getLogin();
 		String senha = frmLogin.getSenha();
-		
+		wsClient.logar(login, senha);
 	}
 	
 	private void cancelarProcesso() {
