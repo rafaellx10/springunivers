@@ -91,6 +91,16 @@ public class WebserviceClient {
 		}
 		
 	}
+	public void fecharCarrinho() throws Exception {
+		String post=String.format("{\"lotIds\":[\"%s\"]}", sessao.getLoteId()) ;
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		HttpEntity<String> entity = new HttpEntity<String>(post,headers);
+		Object result = getRestTemplate().postForObject(getRoot()+"/api/carts", entity, String.class);
+		LOGGER.info("RESPOSTA DO FECHAR CARRINHO --> " + result.toString());
+		JsonNode jsonNode = mapper.readTree(result.toString());
+		LOGGER.info(jsonNode.asText());
+	}
 	/*
 	public void listServices() throws Exception {
 		ResponseEntity<String> response = getRestTemplate().exchange(

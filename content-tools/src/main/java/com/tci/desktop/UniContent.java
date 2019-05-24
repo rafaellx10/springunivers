@@ -27,8 +27,8 @@ import com.tci.beans.Sessao;
 import com.tci.controller.WebserviceClient;
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)	
-public class FrmLogin extends JDialog {
-	private static final Logger LOGGER = LogManager.getLogger(FrmLogin.class);
+public class UniContent extends JDialog {
+	private static final Logger LOGGER = LogManager.getLogger(UniContent.class);
 	@Autowired
 	private WebserviceClient client;
 	@Autowired
@@ -41,7 +41,9 @@ public class FrmLogin extends JDialog {
 	private final JTextField txtServio = new JTextField();
 	private final JButton btnCriarLote = new JButton("Criar Lote");
 	private final JTextField txtLote = new JTextField();
-	public FrmLogin() {
+	private final JLabel lblServio = new JLabel("Serviço");
+	private final JButton btnFinalizar = new JButton("Finalizar");
+	public UniContent() {
 		txtLote.setText("b3f06264-5bd6-4f44-8eb5-bd55d96d982c");
 		txtLote.setColumns(27);
 		txtServio.setText("44");
@@ -112,6 +114,8 @@ public class FrmLogin extends JDialog {
 		flowLayout.setAlignment(FlowLayout.LEFT);
 		getContentPane().add(panel, gbc_panel);
 		
+		panel.add(lblServio);
+		
 		panel.add(txtServio);
 		btnCriarLote.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -122,6 +126,20 @@ public class FrmLogin extends JDialog {
 		panel.add(btnCriarLote);
 		
 		panel.add(txtLote);
+		btnFinalizar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				fecharCarrinho();
+			}
+		});
+		
+		panel.add(btnFinalizar);
+	}
+	private void fecharCarrinho() {
+		try {
+			client.fecharCarrinho();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	public void criarLote() {
 		try {

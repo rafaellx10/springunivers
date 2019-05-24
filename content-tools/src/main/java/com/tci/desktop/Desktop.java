@@ -251,7 +251,7 @@ public class Desktop extends JFrame {
 	}
 	private void uniContent() {
 	
-		FrmLogin frmLogin = ContentTools.getBean(FrmLogin.class);
+		UniContent frmLogin = ContentTools.getBean(UniContent.class);
 		frmLogin.setApi("API:" + ambiente.getUniprofUrl());
 		frmLogin.setVisible(true);
 	
