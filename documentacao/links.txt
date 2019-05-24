@@ -11,6 +11,3 @@ https://thoughts-on-java.org/complete-guide-inheritance-strategies-jpa-hibernate
 https://docs.spring.io/spring-data/jpa/docs/current/reference/html/ - 4.1. Core concepts, 4.4.2. Query Creation, 5.3. Using @Query
 https://blog.caelum.com.br/consultas-fortemente-tipadas-com-jpa/
 http://www.java2s.com/Tutorials/Java/JPA/4520__JPA_Query_Function.htm
-
-2019-05-23 17:28:30 INFO  c.t.c.WebserviceClient - response status: 201 CREATED
-2019-05-23 17:28:31 INFO  c.t.c.WebserviceClient - response body: {"lotId":"b3f06264-5bd6-4f44-8eb5-bd55d96d982c","documentId":"9664eb52-584e-4213-92df-690a85755abf","sellingPrice":"0.00","composition":[{"use":true,"priceItemId":50,"value":0}],"id":"163dca49-c99f-4f4c-9fd0-e0206073b015","createdAt":"2019-05-23T20:28:27.587Z","updatedAt":"2019-05-23T20:28:27.720Z","lastEventId":3016}
