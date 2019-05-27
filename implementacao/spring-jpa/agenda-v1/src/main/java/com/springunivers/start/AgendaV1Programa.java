@@ -19,7 +19,7 @@ public class AgendaV1Programa {
 	@Autowired
 	private ContatoDao dao;
 	public void salvarContatoDao(Contato contato) {
-		Contato find = dao.buscarPorNome(contato.getNome());
+		Contato find = dao.findByNome(contato.getNome());
 		if(find!=null) {
 			contato.setId(find.getId());
 			dao.alterar(contato);
