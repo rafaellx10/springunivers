@@ -7,10 +7,12 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 
+import org.aspectj.weaver.ast.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -100,6 +102,7 @@ public class FormularioAgenda extends JFrame {
 		JButton btSalvar = new JButton("Salvar");
 		btSalvar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				salvar();
 			}
 		});
 		btSalvar.setBounds(61, 125, 89, 23);
@@ -124,6 +127,23 @@ public class FormularioAgenda extends JFrame {
 		setLocationRelativeTo(null);
 	}
 	private void salvar() {
+		if(contato==null)
+			contato = new Contato();
+		
+		contato.setNome(tNome.getText());
+		contato.setSobrenome(tSobrenome.getText());
+		contato.setDdd(Integer.valueOf(tDdd.getText()));
+		contato.setNumero(Long.valueOf(tTelefone.getText()));
+		contato.setCidade(tCidade.getText());
+		contato.setEstado(tUf.getText());
+		//repositorio.save(contato);
+		if(contato.getId()==null)
+			dao.incluir(contato);
+		else
+			dao.alterar(contato);
+		JOptionPane.showMessageDialog(null, "SALVAMOS O CONTATO " + contato.getNome());
+	}
+	private void carregar() {
 		
 	}
 	private void listar() {
