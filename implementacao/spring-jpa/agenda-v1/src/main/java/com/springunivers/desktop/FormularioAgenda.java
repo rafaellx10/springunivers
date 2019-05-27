@@ -3,16 +3,18 @@ package com.springunivers.desktop;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 
-import org.aspectj.weaver.ast.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -25,9 +27,6 @@ import com.springunivers.repository.ContatoRepository;
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)	
 public class FormularioAgenda extends JFrame {
-	private JPanel painelCampos = new JPanel();
-	private JPanel painelTabela = new JPanel();
-	private JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, false, painelCampos, painelTabela);
 	private JTextField tNome;
 	private JTextField tSobrenome;
 	private JTextField tDdd;
@@ -42,7 +41,15 @@ public class FormularioAgenda extends JFrame {
 	
 	private Contato contato;
 	
+	private JTable tabela = new JTable(null);
+	
 	public FormularioAgenda() {
+		JPanel painelCampos = new JPanel();
+		
+		JScrollPane barraRolagem = new JScrollPane(tabela);
+		JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, false, painelCampos, barraRolagem);
+		
+		
 		painelCampos.setLayout(null);
 		
 		JLabel lblNome = new JLabel("Nome");
@@ -147,6 +154,8 @@ public class FormularioAgenda extends JFrame {
 		
 	}
 	private void listar() {
-		
+		List<Contato>lista = dao.findByNome("");
+	    modelo = new ContatoTableModel(lista);
+	    tabela.setModel(modelo);  
 	}
 }

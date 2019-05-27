@@ -40,6 +40,11 @@ public class ContatoDao {
 		}
 		return contato;
 	}
+	//listar todos
+	public List<Contato> findAll() {
+		Query query = em.createQuery("SELECT c FROM Contato");
+		return query.getResultList();
+	}
 	//listar por nome
 	public List<Contato> findByNome(String nome) {
 		Query query = em.createQuery("SELECT c FROM Contato c WHERE c.nome = :nome");
