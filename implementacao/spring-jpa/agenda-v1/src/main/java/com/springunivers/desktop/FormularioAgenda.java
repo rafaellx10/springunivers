@@ -41,12 +41,13 @@ public class FormularioAgenda extends JFrame {
 	
 	private Contato contato;
 	
-	private JTable tabela = new JTable(null);
+	private JTable tabela = new JTable(ContatoTableModel.vazio());
 	
 	public FormularioAgenda() {
 		JPanel painelCampos = new JPanel();
 		
-		JScrollPane barraRolagem = new JScrollPane(tabela);
+		JScrollPane barraRolagem = new JScrollPane();
+		barraRolagem.getViewport().add(tabela);
 		JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, false, painelCampos, barraRolagem);
 		
 		
@@ -151,11 +152,23 @@ public class FormularioAgenda extends JFrame {
 		JOptionPane.showMessageDialog(null, "SALVAMOS O CONTATO " + contato.getNome());
 	}
 	private void carregar() {
-		
+		/*
+		 int linhaSelecionada = -1;
+        linhaSelecionada = tabela.getSelectedRow();
+        if (linhaSelecionada >= 0) {
+            int idContato = (int) tabela.getValueAt(linhaSelecionada, 0);
+            AtualizarContato ic = new AtualizarContato(modelo, idContato, linhaSelecionada);
+            ic.setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(null, "É necessário selecionar uma linha.");
+        }
+		 
+		 
+		 */
 	}
 	private void listar() {
-		List<Contato>lista = dao.findByNome("");
-	    modelo = new ContatoTableModel(lista);
+		List<Contato>lista = dao.findAll();
+	    ContatoTableModel modelo = new ContatoTableModel(lista);
 	    tabela.setModel(modelo);  
 	}
 }

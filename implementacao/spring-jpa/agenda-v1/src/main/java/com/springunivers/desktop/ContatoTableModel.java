@@ -15,10 +15,15 @@ public class ContatoTableModel extends AbstractTableModel {
     
     private List<Contato> linhas;
     private String[] colunas = new String[]{"Id", "Nome", "DDD", "Telefone"};
+    
+    public static ContatoTableModel vazio() {
+    	return new ContatoTableModel(new ArrayList<Contato>());
+    }
+    
     public ContatoTableModel(List<Contato> contatos) {
         this.linhas = new ArrayList<>(contatos);
     }
- 
+    
     public int getRowCount() {
         return linhas.size();
     }
