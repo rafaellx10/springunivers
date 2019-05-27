@@ -42,7 +42,7 @@ public class ContatoDao {
 	}
 	//listar todos
 	public List<Contato> findAll() {
-		Query query = em.createQuery("SELECT c FROM Contato");
+		Query query = em.createQuery("SELECT c FROM Contato c");
 		return query.getResultList();
 	}
 	//listar por nome

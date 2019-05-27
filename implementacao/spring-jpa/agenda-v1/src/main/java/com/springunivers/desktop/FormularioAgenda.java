@@ -133,6 +133,7 @@ public class FormularioAgenda extends JFrame {
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
+		listar();
 	}
 	private void salvar() {
 		if(contato==null)
@@ -149,6 +150,7 @@ public class FormularioAgenda extends JFrame {
 			dao.incluir(contato);
 		else
 			dao.alterar(contato);
+		listar();
 		JOptionPane.showMessageDialog(null, "SALVAMOS O CONTATO " + contato.getNome());
 	}
 	private void carregar() {
