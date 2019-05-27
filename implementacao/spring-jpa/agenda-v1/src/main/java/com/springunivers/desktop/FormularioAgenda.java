@@ -1,19 +1,24 @@
 package com.springunivers.desktop;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.JTextField;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+
+import com.springunivers.dao.ContatoDao;
+import com.springunivers.model.Contato;
+import com.springunivers.repository.ContatoRepository;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)	
@@ -27,6 +32,13 @@ public class FormularioAgenda extends JFrame {
 	private JTextField tTelefone;
 	private JTextField tUf;
 	private JTextField tCidade;
+	
+	@Autowired
+	private ContatoRepository repositorio;
+	@Autowired
+	private ContatoDao dao;
+	
+	private Contato contato;
 	
 	public FormularioAgenda() {
 		painelCampos.setLayout(null);
@@ -110,5 +122,11 @@ public class FormularioAgenda extends JFrame {
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
+	}
+	private void salvar() {
+		
+	}
+	private void listar() {
+		
 	}
 }

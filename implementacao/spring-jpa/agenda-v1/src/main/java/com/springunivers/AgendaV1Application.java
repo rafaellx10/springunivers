@@ -32,26 +32,4 @@ public class AgendaV1Application {
 	public static <T> T getBean(Class classe) {
 		return (T) contexto.getBean(classe);
 	}
-	/*
-	@Bean
-	public CommandLineRunner run(FormularioAgenda formulario) {
-		return args -> {
-			formulario.exibir();
-			/*
-			Contato contato = new Contato();
-			contato.setNome("RAIANE");
-			contato.setSobrenome("OLIVEIRA");
-			contato.setDdd(11);
-			contato.setNumero(455696654L);
-			contato.setCidade("PARNAIBA");
-			contato.setEstado("PI");
-			
-			programa.salvarContatoDao(contato);
-			
-			//programa.incluirContatoRepository(contato);
-			//programa.imprimirContatos();
-			//programa.imprimirContatosContem("JOSE");
-		};
-	}
-	*/
 }
