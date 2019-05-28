@@ -44,12 +44,12 @@ public class FormularioAgenda extends JFrame {
 	private Contato contato;
 	private ContatoTableModel modelo;
 	private JTable tabela = new JTable(ContatoTableModel.vazio());
+	private JTextField tFiltro;
 	public FormularioAgenda() {
 		JPanel painelCampos = new JPanel();
 		
 		JScrollPane barraRolagem = new JScrollPane();
-		
-		barraRolagem.getViewport().add(tabela);
+		barraRolagem.setViewportView(tabela);
 		JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, false, painelCampos, barraRolagem);
 		
 		
@@ -125,7 +125,25 @@ public class FormularioAgenda extends JFrame {
 		});
 		btFechar.setBounds(150, 125, 89, 23);
 		painelCampos.add(btFechar);
-		split.setDividerLocation(150);
+		
+		JLabel lblFiltro = new JLabel("FILTRO");
+		lblFiltro.setBounds(10, 174, 46, 14);
+		painelCampos.add(lblFiltro);
+		
+		tFiltro = new JTextField();
+		tFiltro.setBounds(64, 171, 150, 20);
+		painelCampos.add(tFiltro);
+		tFiltro.setColumns(10);
+		
+		JButton btnFiltar = new JButton("Filtar");
+		btnFiltar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				listarComFiltro();
+			}
+		});
+		btnFiltar.setBounds(215, 170, 59, 23);
+		painelCampos.add(btnFiltar);
+		split.setDividerLocation(200);
 		split.setOneTouchExpandable(true); 
 		getContentPane().setLayout( new BorderLayout());
 		getContentPane().add(split, BorderLayout.CENTER);
@@ -165,6 +183,7 @@ public class FormularioAgenda extends JFrame {
 		linhaSelecionada = tabela.getSelectedRow();
 		if (linhaSelecionada >= 0) {
 			contato = modelo.getContato(linhaSelecionada);
+			System.out.println(dao.getNomeComTelefone(contato.getId()));
 		} else {
 			JOptionPane.showMessageDialog(null, "É necessário selecionar uma linha.");
 		}
@@ -188,8 +207,15 @@ public class FormularioAgenda extends JFrame {
 		 
 	}
 	private void listar() {
-		List<Contato>lista = dao.findAll();
+		//List<Contato>lista = dao.findAll();
+		List<Contato>lista = dao.findAllCriteria();
 	    modelo = new ContatoTableModel(lista);
+	    tabela.setModel(modelo);  
+	}
+	private void listarComFiltro() {
+		String filtro = tFiltro.getText();
+		List<Contato>lista = dao.findByNomeContaining(filtro);
+		modelo = new ContatoTableModel(lista);
 	    tabela.setModel(modelo);  
 	}
 }
