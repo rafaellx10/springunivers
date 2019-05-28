@@ -81,27 +81,4 @@ public class ContatoTableModel extends AbstractTableModel {
     public Contato getContato(int indiceLinha) {
         return linhas.get(indiceLinha);
     }
- 
-    public void addContato(Contato contato) {
-        linhas.add(contato);
-        int ultimoIndice = getRowCount() - 1;
-        fireTableRowsInserted(ultimoIndice, 
-        ultimoIndice);
- 
-    }
- 
-    public void updateContato(int indiceLinha, Contato marca) {
-        linhas.set(indiceLinha, marca);
-        fireTableRowsUpdated(indiceLinha, 
-        indiceLinha);
- 
-    }
- 
-    public void removeContato(int indiceLinha) {
-        linhas.remove(indiceLinha);
-        fireTableRowsDeleted(indiceLinha, 
-        indiceLinha);
- 
-    }
-
 }

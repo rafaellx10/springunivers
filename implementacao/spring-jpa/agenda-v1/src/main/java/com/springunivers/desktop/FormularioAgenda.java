@@ -3,6 +3,8 @@ package com.springunivers.desktop;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -40,13 +42,13 @@ public class FormularioAgenda extends JFrame {
 	private ContatoDao dao;
 	
 	private Contato contato;
-	
+	private ContatoTableModel modelo;
 	private JTable tabela = new JTable(ContatoTableModel.vazio());
-	
 	public FormularioAgenda() {
 		JPanel painelCampos = new JPanel();
 		
 		JScrollPane barraRolagem = new JScrollPane();
+		
 		barraRolagem.getViewport().add(tabela);
 		JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, false, painelCampos, barraRolagem);
 		
@@ -127,6 +129,11 @@ public class FormularioAgenda extends JFrame {
 		split.setOneTouchExpandable(true); 
 		getContentPane().setLayout( new BorderLayout());
 		getContentPane().add(split, BorderLayout.CENTER);
+		tabela.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				carregar();
+			}
+		});
 	}
 	public void exibir() {
 		setSize(400, 400);
@@ -154,23 +161,35 @@ public class FormularioAgenda extends JFrame {
 		JOptionPane.showMessageDialog(null, "SALVAMOS O CONTATO " + contato.getNome());
 	}
 	private void carregar() {
-		/*
-		 int linhaSelecionada = -1;
-        linhaSelecionada = tabela.getSelectedRow();
-        if (linhaSelecionada >= 0) {
-            int idContato = (int) tabela.getValueAt(linhaSelecionada, 0);
-            AtualizarContato ic = new AtualizarContato(modelo, idContato, linhaSelecionada);
-            ic.setVisible(true);
-        } else {
-            JOptionPane.showMessageDialog(null, "É necessário selecionar uma linha.");
-        }
+		int linhaSelecionada = -1;
+		linhaSelecionada = tabela.getSelectedRow();
+		if (linhaSelecionada >= 0) {
+			contato = modelo.getContato(linhaSelecionada);
+		} else {
+			JOptionPane.showMessageDialog(null, "É necessário selecionar uma linha.");
+		}
+		if(contato!=null) {
+			tNome.setText(contato.getNome());
+			tSobrenome.setText(contato.getSobrenome());
+			tDdd.setText(contato.getDdd().toString());
+			tTelefone.setText(contato.getNumero().toString());
+			tCidade.setText(contato.getCidade());
+			tUf.setText(contato.getEstado());
+		}else {
+			tNome.setText("");
+			tSobrenome.setText("");
+			tDdd.setText("");
+			tTelefone.setText("");
+			tCidade.setText("");
+			tUf.setText("");
+		}
 		 
 		 
-		 */
+		 
 	}
 	private void listar() {
 		List<Contato>lista = dao.findAll();
-	    ContatoTableModel modelo = new ContatoTableModel(lista);
+	    modelo = new ContatoTableModel(lista);
 	    tabela.setModel(modelo);  
 	}
 }
