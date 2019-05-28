@@ -15,6 +15,7 @@ import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Repository;
 
+import com.springunivers.model.Cliente;
 import com.springunivers.model.Contato;
 
 @Repository
@@ -62,8 +63,8 @@ public class ContatoDao {
 		return query.getResultList();
 	}
 	//listar por nome LIKE
-	public List<Contato> findByNomeContaining(String nome) {
-		Query query = em.createQuery("SELECT c FROM Contato c WHERE c.nome LIKE :nome");
+	public List<Cliente> findByNomeContaining(String nome) {
+		Query query = em.createQuery("SELECT c FROM Cliente c WHERE c.nome LIKE :nome");
 		query.setParameter("nome", "%" + nome + "%");
 		return query.getResultList();
 	}
@@ -87,14 +88,14 @@ public class ContatoDao {
 	}
 	//API CRITERIA
 	//http://blog.werneckpaiva.com.br/2012/01/queries-com-a-nova-jpa2-criteria-api/
-	public List<Contato> findAllCriteria(){
+	public List<Cliente> findAllCriteria(){
 		CriteriaBuilder builder = em.getCriteriaBuilder();
-		CriteriaQuery<Contato> query = builder.createQuery(Contato.class);
-		Root<Contato> from = query.from(Contato.class);
-		CriteriaQuery<Contato> select = query.select(from);
+		CriteriaQuery<Cliente> query = builder.createQuery(Cliente.class);
+		Root<Cliente> from = query.from(Cliente.class);
+		CriteriaQuery<Cliente> select = query.select(from);
 		 
-		TypedQuery<Contato> typedQuery = em.createQuery(select);
-		List<Contato> results = typedQuery.getResultList();
+		TypedQuery<Cliente> typedQuery = em.createQuery(select);
+		List<Cliente> results = typedQuery.getResultList();
 		return results;
 	}
 	

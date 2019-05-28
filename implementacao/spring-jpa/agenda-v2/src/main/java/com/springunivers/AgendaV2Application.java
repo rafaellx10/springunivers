@@ -11,14 +11,14 @@ import org.springframework.context.ConfigurableApplicationContext;
 import com.springunivers.desktop.FormularioAgenda;
 
 @SpringBootApplication
-public class AgendaV1Application {
-	private static final Logger LOGGER = LogManager.getLogger(AgendaV1Application.class);
+public class AgendaV2Application {
+	private static final Logger LOGGER = LogManager.getLogger(AgendaV2Application.class);
 	private static ConfigurableApplicationContext contexto;
 	public static void main(String[] args) {
 		try {
 			String lf = UIManager.getSystemLookAndFeelClassName();
 			UIManager.setLookAndFeel(lf);
-			SpringApplicationBuilder builder = new SpringApplicationBuilder(AgendaV1Application.class);
+			SpringApplicationBuilder builder = new SpringApplicationBuilder(AgendaV2Application.class);
 			builder.headless(false);
 			contexto = builder.run(args);
 			FormularioAgenda main = getBean(FormularioAgenda.class);

@@ -1,15 +1,15 @@
 package com.springunivers.model;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.MappedSuperclass;
 
-@Entity
-@Table(name="tb_contato")
-public class Contato {
+/*@Entity
+@Table(name="tb_contato")*/
+@MappedSuperclass
+public abstract class Contato { //abstract 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Integer id;

@@ -23,6 +23,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.springunivers.dao.ContatoDao;
+import com.springunivers.model.Cliente;
 import com.springunivers.model.Contato;
 import com.springunivers.repository.ContatoRepository;
 
@@ -36,8 +37,6 @@ public class FormularioAgenda extends JFrame {
 	private JTextField tUf;
 	private JTextField tCidade;
 	
-	@Autowired
-	private ContatoRepository repositorio;
 	@Autowired
 	private ContatoDao dao;
 	
@@ -162,7 +161,7 @@ public class FormularioAgenda extends JFrame {
 	}
 	private void salvar() {
 		if(contato==null)
-			contato = new Contato();
+			contato = new Cliente();
 		
 		contato.setNome(tNome.getText());
 		contato.setSobrenome(tSobrenome.getText());
@@ -208,13 +207,13 @@ public class FormularioAgenda extends JFrame {
 	}
 	private void listar() {
 		//List<Contato>lista = dao.findAll();
-		List<Contato>lista = dao.findAllCriteria();
+		List<Cliente>lista = dao.findAllCriteria();
 	    modelo = new ContatoTableModel(lista);
 	    tabela.setModel(modelo);  
 	}
 	private void listarComFiltro() {
 		String filtro = tFiltro.getText();
-		List<Contato>lista = dao.findByNomeContaining(filtro);
+		List<Cliente>lista = dao.findByNomeContaining(filtro);
 		modelo = new ContatoTableModel(lista);
 	    tabela.setModel(modelo);  
 	}

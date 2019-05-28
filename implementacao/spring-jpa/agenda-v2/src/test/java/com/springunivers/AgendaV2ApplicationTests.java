@@ -7,7 +7,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class AgendaV1ApplicationTests {
+public class AgendaV2ApplicationTests {
 
 	@Test
 	public void contextLoads() {

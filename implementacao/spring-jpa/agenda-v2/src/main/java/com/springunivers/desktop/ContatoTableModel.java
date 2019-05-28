@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
+import com.springunivers.model.Cliente;
 import com.springunivers.model.Contato;
 
 public class ContatoTableModel extends AbstractTableModel {
@@ -13,14 +14,14 @@ public class ContatoTableModel extends AbstractTableModel {
     private static final int COL_DDD = 3;
     private static final int COL_TELEFONE = 2;
     
-    private List<Contato> linhas;
+    private List<Cliente> linhas;
     private String[] colunas = new String[]{"Id", "Nome", "DDD", "Telefone"};
     
     public static ContatoTableModel vazio() {
-    	return new ContatoTableModel(new ArrayList<Contato>());
+    	return new ContatoTableModel(new ArrayList<Cliente>());
     }
     
-    public ContatoTableModel(List<Contato> contatos) {
+    public ContatoTableModel(List<Cliente> contatos) {
         this.linhas = new ArrayList<>(contatos);
     }
     
@@ -78,7 +79,7 @@ public class ContatoTableModel extends AbstractTableModel {
         }
     }
  
-    public Contato getContato(int indiceLinha) {
+    public Cliente getContato(int indiceLinha) {
         return linhas.get(indiceLinha);
     }
 }
