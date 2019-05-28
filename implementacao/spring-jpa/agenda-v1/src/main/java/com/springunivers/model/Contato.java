@@ -25,6 +25,7 @@ public class Contato {
 	private String cidade;
 	@Column(length=2,nullable=false)
 	private String estado;
+	
 	public Integer getId() {
 		return id;
 	}
