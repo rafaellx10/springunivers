@@ -1,4 +1,4 @@
-package com.springunivers.model;
+package com.springunivers.model.heranca.mappedsuperclass;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;

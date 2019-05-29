@@ -1,11 +1,13 @@
-package com.springunivers.model;
+package com.springunivers.model.heranca.mappedsuperclass;
 
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 @Entity
+@Table(name="h1_fornecedor")
 public class Fornecedor extends Contato {
 	@Temporal(TemporalType.DATE)
 	private Date ultimaVisita;
