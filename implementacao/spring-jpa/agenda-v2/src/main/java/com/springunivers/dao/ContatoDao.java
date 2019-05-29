@@ -9,8 +9,7 @@ import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Repository;
 
-import com.springunivers.model.heranca.tableperclass.Cliente;
-import com.springunivers.model.heranca.tableperclass.Contato;
+import com.springunivers.model.heranca.singletable.*;;
 
 @Repository
 public class ContatoDao {

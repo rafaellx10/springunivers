@@ -9,10 +9,11 @@ import com.springunivers.dao.ContatoDao;
 public class AgendaV2Programa {
 	@Autowired
 	private ContatoDao dao;
+	private final int ID=5;
 	public void buscarContato() {
-		dao.buscarOuInserirContato(2);
+		dao.buscarOuInserirContato(ID);
 	}
 	public void atualizarUltimaCompra() {
-		dao.atualizarUltimaVisitaCliente(2);
+		dao.atualizarUltimaVisitaCliente(ID);
 	}
 }

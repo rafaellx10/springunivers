@@ -1,18 +1,19 @@
-package com.springunivers.model.heranca.tableperclass;
+package com.springunivers.model.heranca.singletable;
 
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
-@Table(name="h2_cliente")
+//DEIXA DE TER @Table
+@DiscriminatorValue("C")
 public class Cliente extends Contato {
-	//@Temporal(TemporalType.TIMESTAMP)
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
+	//@Temporal(TemporalType.DATE)
 	private Date ultimaCompra;
 	@Column(length = 7,precision = 2)
 	private Double valor;
