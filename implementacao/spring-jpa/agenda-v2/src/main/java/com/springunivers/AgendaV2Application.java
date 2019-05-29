@@ -1,35 +1,20 @@
 package com.springunivers;
 
-import javax.swing.UIManager;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.context.ConfigurableApplicationContext;
-
-import com.springunivers.desktop.FormularioAgenda;
+import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class AgendaV2Application {
-	private static final Logger LOGGER = LogManager.getLogger(AgendaV2Application.class);
-	private static ConfigurableApplicationContext contexto;
 	public static void main(String[] args) {
-		try {
-			String lf = UIManager.getSystemLookAndFeelClassName();
-			UIManager.setLookAndFeel(lf);
-			SpringApplicationBuilder builder = new SpringApplicationBuilder(AgendaV2Application.class);
-			builder.headless(false);
-			contexto = builder.run(args);
-			FormularioAgenda main = getBean(FormularioAgenda.class);
-			main.exibir();
-			LOGGER.info("Bem vindo");
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(0);
-		}
+		SpringApplication.run(AgendaV2Application.class, args);
 	}
-	public static <T> T getBean(Class classe) {
-		return (T) contexto.getBean(classe);
+	@Bean
+	public CommandLineRunner run(AgendaV2Programa programa) {
+		return args -> {
+			programa.start();
+		};
 	}
+	
 }
