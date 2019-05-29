@@ -1,6 +1,7 @@
 package com.springunivers.model;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -19,10 +20,9 @@ public class Contato {
 	private String nome;
 	@Column(length=50,nullable=false)
 	private String sobrenome;
-	@Column(length=2,nullable=false)
-	private Integer ddd;
-	@Column(length=9,nullable=false)
-	private Long numero;
+	
+	@Embedded
+	private Telefone telefone;
 	
 	@ManyToOne
 	@JoinColumn(name="v3_cid_id")
@@ -46,17 +46,17 @@ public class Contato {
 	public void setSobrenome(String sobrenome) {
 		this.sobrenome = sobrenome;
 	}
-	public Integer getDdd() {
-		return ddd;
+	public Cidade getCidade() {
+		return cidade;
 	}
-	public void setDdd(Integer ddd) {
-		this.ddd = ddd;
+	public void setCidade(Cidade cidade) {
+		this.cidade = cidade;
 	}
-	public Long getNumero() {
-		return numero;
+	public Telefone getTelefone() {
+		return telefone;
 	}
-	public void setNumero(Long numero) {
-		this.numero = numero;
-	}
+	public void setTelefone(Telefone telefone) {
+		this.telefone = telefone;
+	}s
 	
 }
