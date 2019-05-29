@@ -9,7 +9,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
-@Table(name="h1_cliente")
+@Table(name="v2_h1_cliente")
 public class Cliente extends Contato {
 	@Temporal(TemporalType.DATE)
 	private Date ultimaCompra;

@@ -11,7 +11,7 @@ import javax.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name="h4_contato")
+@Table(name="v2_h4_contato")
 public abstract class Contato { 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)

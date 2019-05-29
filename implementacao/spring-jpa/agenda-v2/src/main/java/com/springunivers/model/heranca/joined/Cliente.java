@@ -9,7 +9,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
-@Table(name="h4_cliente")
+@Table(name="v2_h4_cliente")
 public class Cliente extends Contato {
 	@Temporal(TemporalType.TIMESTAMP)
 	//@Temporal(TemporalType.DATE)

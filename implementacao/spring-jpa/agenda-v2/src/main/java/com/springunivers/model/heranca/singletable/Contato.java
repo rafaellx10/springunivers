@@ -13,7 +13,7 @@ import javax.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TIPO_CONTATO")
-@Table(name="h3_contato")
+@Table(name="v2_h3_contato")
 public abstract class Contato { 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
