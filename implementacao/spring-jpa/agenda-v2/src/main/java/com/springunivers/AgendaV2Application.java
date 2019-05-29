@@ -5,6 +5,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import com.springunivers.init.AgendaV2Programa;
+
 @SpringBootApplication
 public class AgendaV2Application {
 	public static void main(String[] args) {
@@ -13,7 +15,7 @@ public class AgendaV2Application {
 	@Bean
 	public CommandLineRunner run(AgendaV2Programa programa) {
 		return args -> {
-			programa.start();
+			programa.buscarContato();
 		};
 	}
 	
