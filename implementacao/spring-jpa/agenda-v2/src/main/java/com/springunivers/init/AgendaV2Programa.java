@@ -10,6 +10,9 @@ public class AgendaV2Programa {
 	@Autowired
 	private ContatoDao dao;
 	public void buscarContato() {
-		System.out.println(dao.buscar(1));
+		dao.buscarOuInserirContato(2);
+	}
+	public void atualizarUltimaCompra() {
+		dao.atualizarUltimaVisitaCliente(2);
 	}
 }

@@ -11,7 +11,8 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name="h2_cliente")
 public class Cliente extends Contato {
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
+	//@Temporal(TemporalType.DATE)
 	private Date ultimaCompra;
 	@Column(length = 7,precision = 2)
 	private Double valor;

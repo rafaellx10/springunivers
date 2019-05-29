@@ -16,6 +16,7 @@ public class AgendaV2Application {
 	public CommandLineRunner run(AgendaV2Programa programa) {
 		return args -> {
 			programa.buscarContato();
+			programa.atualizarUltimaCompra();
 		};
 	}
 	
