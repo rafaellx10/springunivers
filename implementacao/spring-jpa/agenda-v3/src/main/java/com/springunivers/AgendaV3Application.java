@@ -34,7 +34,11 @@ public class AgendaV3Application {
 				contato.setCidade(cidade);
 				dao.inserirContato(contato);
 			}else {
-				System.out.println("Cidade não localizada, realizando a inseração ");
+				System.out.println("Cidade não localizada, realizando a inseração ... ");
+				cidade = new Cidade();
+				cidade.setId(CIDADE_ID);
+				cidade.setNome("SÃO PAULO");
+				cidade.setEstado("SP");
 				dao.inserirCidade(cidade);
 			}
 			

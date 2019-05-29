@@ -12,7 +12,7 @@ public class Cidade {
 	//@GeneratedValue(strategy=GenerationType.AUTO)
 	private Integer id;
 	@Column(length=50,nullable=false)
-	private String cidade;
+	private String nome;
 	@Column(length=2,nullable=false)
 	private String estado;
 	public Integer getId() {
@@ -21,11 +21,11 @@ public class Cidade {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	public String getCidade() {
-		return cidade;
+	public String getNome() {
+		return nome;
 	}
-	public void setCidade(String cidade) {
-		this.cidade = cidade;
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
 	public String getEstado() {
 		return estado;
@@ -35,7 +35,7 @@ public class Cidade {
 	}
 	@Override
 	public String toString() {
-		return "Cidade [id=" + id + ", cidade=" + cidade + ", estado=" + estado + "]";
+		return "Cidade [id=" + id + ", nome=" + nome + ", estado=" + estado + "]";
 	}
 	
 }
