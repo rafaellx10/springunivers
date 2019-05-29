@@ -6,14 +6,12 @@ import org.springframework.stereotype.Component;
 import com.springunivers.dao.ContatoDao;
 
 @Component
-public class AgendaV2Programa {
+public class AgendaV3Programa {
 	@Autowired
 	private ContatoDao dao;
 	private final int ID=5;
 	public void buscarOuInserirContato() {
 		dao.buscarOuInserirContato(ID);
 	}
-	public void atualizarUltimaCompra() {
-		dao.atualizarUltimaVisitaCliente(ID);
-	}
+	
 }
