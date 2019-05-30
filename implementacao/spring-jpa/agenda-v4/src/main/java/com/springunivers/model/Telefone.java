@@ -1,12 +1,20 @@
 package com.springunivers.model;
 
 import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
-@Embeddable
+@Entity
+@Table(name="v4_m1_telefone")
 public class Telefone {
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	private Integer id;
 	@Column(length=2,nullable=false)
 	private Integer ddd;
 	@Column(length=9,nullable=false)
@@ -31,6 +39,9 @@ public class Telefone {
 	}
 	public void setTipo(TelefoneTipo tipo) {
 		this.tipo = tipo;
+	}
+	public Integer getId() {
+		return id;
 	}
 	
 }

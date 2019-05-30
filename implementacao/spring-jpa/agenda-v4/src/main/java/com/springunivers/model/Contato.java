@@ -15,7 +15,7 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="v3_contato")
+@Table(name="v4_m1_contato")
 public class Contato { 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
