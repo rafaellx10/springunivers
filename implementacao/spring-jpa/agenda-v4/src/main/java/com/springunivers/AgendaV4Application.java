@@ -9,6 +9,7 @@ import com.springunivers.dao.ContatoDao;
 import com.springunivers.model.map1.Cidade;
 import com.springunivers.model.map1.Contato;
 import com.springunivers.model.map1.Telefone;
+import com.springunivers.model.map1.TelefoneTipo;
 
 @SpringBootApplication
 public class AgendaV4Application {
@@ -29,7 +30,8 @@ public class AgendaV4Application {
 				Telefone tel = new Telefone();
 				tel.setDdd(11);
 				tel.setNumero(978786514L);
-				contato.setTelefone(tel);
+				tel.setTipo(TelefoneTipo.CEL);
+				contato.addTelefone(tel);
 				
 				contato.setCidade(cidade);
 				dao.inserirContato(contato);

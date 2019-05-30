@@ -1,7 +1,10 @@
 package com.springunivers.model.map1;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -10,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -25,15 +29,25 @@ public class Contato {
 	@Column(length=50,nullable=false)
 	private String sobrenome;
 	
-	@Embedded
-	private Telefone telefone;
+	//@OneToMany()
+	@OneToMany(cascade = CascadeType.ALL)
+	private List<Telefone> telefones;
 	
 	@ManyToOne
-	@JoinColumn(name="v3_cid_id")
+	@JoinColumn(name="v4_cid_id")
 	private Cidade cidade;
 	
 	@Embedded
 	private Log log;
+	
+	public void addTelefone(Telefone telefone) {
+		if(telefones==null)
+			telefones = new ArrayList<Telefone>();
+		telefones.add(telefone);
+	}
+	public List<Telefone> getTelefones() {
+		return telefones;
+	}
 	
 	public Integer getId() {
 		return id;
@@ -58,12 +72,6 @@ public class Contato {
 	}
 	public void setCidade(Cidade cidade) {
 		this.cidade = cidade;
-	}
-	public Telefone getTelefone() {
-		return telefone;
-	}
-	public void setTelefone(Telefone telefone) {
-		this.telefone = telefone;
 	}
 	@PrePersist
 	private void prePersist() {
