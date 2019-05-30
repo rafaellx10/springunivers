@@ -6,7 +6,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="v4_map1_cidade")
+@Table(name="v4_map2_cidade")
 public class Cidade {
 	@Id
 	//@GeneratedValue(strategy=GenerationType.AUTO)

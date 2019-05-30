@@ -19,7 +19,7 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="v4_map1_contato")
+@Table(name="v4_map2_contato")
 public class Contato { 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -30,7 +30,7 @@ public class Contato {
 	private String sobrenome;
 	
 	//@OneToMany()
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL,mappedBy = "contato")
 	private List<Telefone> telefones;
 	
 	@ManyToOne
@@ -43,6 +43,9 @@ public class Contato {
 	public void addTelefone(Telefone telefone) {
 		if(telefones==null)
 			telefones = new ArrayList<Telefone>();
+		//
+		telefone.setContato(this);
+		//
 		telefones.add(telefone);
 	}
 	public List<Telefone> getTelefones() {

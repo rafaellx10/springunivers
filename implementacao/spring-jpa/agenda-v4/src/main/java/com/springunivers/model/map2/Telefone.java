@@ -7,10 +7,12 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="v4_map1_telefone")
+@Table(name="v4_map2_telefone")
 public class Telefone {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -21,6 +23,10 @@ public class Telefone {
 	private Long numero;
 	@Enumerated(EnumType.ORDINAL) //EnumType.STRING
 	private TelefoneTipo tipo;
+	
+	@ManyToOne
+	@JoinColumn(name = "v4_map2_contato")
+	private Contato contato;
 	
 	public Integer getDdd() {
 		return ddd;
@@ -42,6 +48,12 @@ public class Telefone {
 	}
 	public Integer getId() {
 		return id;
+	}
+	public Contato getContato() {
+		return contato;
+	}
+	public void setContato(Contato contato) {
+		this.contato = contato;
 	}
 	
 }
