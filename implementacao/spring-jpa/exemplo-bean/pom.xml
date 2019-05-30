@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.springunivers</groupId>
-	<artifactId>teste-bean</artifactId>
+	<artifactId>exemplo-bean</artifactId>
 	<version>1.0</version>
-	<name>teste-bean</name>
+	<name>exemplo-bean</name>
 	<description>Fundamentos do Spring com JPA</description>
 
 	<properties>
