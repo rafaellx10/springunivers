@@ -11,8 +11,8 @@ public class StartHSQLDB {
 	}
 
 	private static void local() {
-		//final String[] dbArgs = { "--user", "sa", "--password", "sa", "--url", "jdbc:hsqldb:" + URL };
-		final String[] dbArgs = { "--url", "jdbc:hsqldb:" + URL };
+		final String[] dbArgs = { "--user", "sa", "--password", "sa", "--url", "jdbc:hsqldb:" + URL };
+		//final String[] dbArgs = { "--url", "jdbc:hsqldb:" + URL };
 		DatabaseManagerSwing.main(dbArgs);
 
 	}
