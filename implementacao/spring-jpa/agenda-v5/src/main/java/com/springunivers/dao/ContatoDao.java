@@ -14,20 +14,12 @@ public class ContatoDao {
 	@PersistenceContext
 	private EntityManager em;
 	@Transactional
-	public void inserirContatoComAmigo(Integer id) {
-		Contato contato = em.find(Contato.class, id);
-		if(contato==null) {
-			contato = new Contato();
-			contato.setNome("GLEYSON");
-			contato.setSobrenome("SAMPAIO");
-			contato.setDdd(11);
-			contato.setNumero(978786514L);
-			contato.setEstado("SP");
-			contato.setCidade("SAO PAULO");
-			em.persist(contato);
-		}else {
-			System.out.println(contato.getId() + " " + contato.getNome() + " " + contato.getSobrenome());
-		}
+	public void inserirContato(Contato contato) {
+		em.persist(contato);
 	}
+	public Contato buscarContato(Integer id) {
+		return em.find(Contato.class, id);
+	}
+	
 	
 }

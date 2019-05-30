@@ -1,10 +1,16 @@
 package com.springunivers.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -25,6 +31,14 @@ public class Contato {
 	private String cidade;
 	@Column(length=2,nullable=false)
 	private String estado;
+	
+	@OneToMany(fetch=FetchType.EAGER)
+	private List<Contato> amigos;
+	public void add(Contato amigo) {
+		if(amigos==null)
+			amigos = new ArrayList<Contato>();
+		amigos.add(amigo);
+	}
 	public Integer getId() {
 		return id;
 	}
@@ -71,6 +85,9 @@ public class Contato {
 	public String toString() {
 		return "Contato [id=" + id + ", nome=" + nome + ", sobrenome=" + sobrenome + ", ddd=" + ddd + ", numero="
 				+ numero + ", cidade=" + cidade + ", estado=" + estado + "]";
+	}
+	public List<Contato> getAmigos() {
+		return amigos;
 	}
 	
 }
