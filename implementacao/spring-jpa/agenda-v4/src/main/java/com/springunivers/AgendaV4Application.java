@@ -6,9 +6,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import com.springunivers.dao.ContatoDao;
-import com.springunivers.model.Cidade;
-import com.springunivers.model.Contato;
-import com.springunivers.model.Telefone;
+import com.springunivers.model.map1.Cidade;
+import com.springunivers.model.map1.Contato;
+import com.springunivers.model.map1.Telefone;
 
 @SpringBootApplication
 public class AgendaV4Application {

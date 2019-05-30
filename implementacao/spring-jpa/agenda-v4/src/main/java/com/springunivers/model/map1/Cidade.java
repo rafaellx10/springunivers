@@ -1,4 +1,4 @@
-package com.springunivers.model;
+package com.springunivers.model.map1;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -6,7 +6,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="v4_m1_cidade")
+@Table(name="v4_map1_cidade")
 public class Cidade {
 	@Id
 	//@GeneratedValue(strategy=GenerationType.AUTO)

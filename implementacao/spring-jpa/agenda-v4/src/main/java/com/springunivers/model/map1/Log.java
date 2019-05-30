@@ -1,4 +1,4 @@
-package com.springunivers.model;
+package com.springunivers.model.map1;
 
 import java.util.Date;
 

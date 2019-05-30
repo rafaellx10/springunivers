@@ -1,4 +1,4 @@
-package com.springunivers.model;
+package com.springunivers.model.map1;
 
 import java.util.Date;
 
@@ -15,7 +15,7 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="v4_m1_contato")
+@Table(name="v4_map1_contato")
 public class Contato { 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)

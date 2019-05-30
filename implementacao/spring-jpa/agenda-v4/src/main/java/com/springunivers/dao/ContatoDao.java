@@ -6,8 +6,8 @@ import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Repository;
 
-import com.springunivers.model.Cidade;
-import com.springunivers.model.Contato;
+import com.springunivers.model.map1.Cidade;
+import com.springunivers.model.map1.Contato;
 
 
 @Repository
