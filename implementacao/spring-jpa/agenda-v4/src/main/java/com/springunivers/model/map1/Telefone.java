@@ -19,7 +19,7 @@ public class Telefone {
 	private Integer ddd;
 	@Column(length=9,nullable=false)
 	private Long numero;
-	@Enumerated(EnumType.ORDINAL) //EnumType.STRING
+	@Enumerated(EnumType.STRING) //EnumType.STRING
 	private TelefoneTipo tipo;
 	
 	public Integer getDdd() {

@@ -31,6 +31,10 @@ public class AgendaV3Application {
 				tel.setNumero(978786514L);
 				contato.setTelefone(tel);
 				
+				cidade = new Cidade();
+				cidade.setNome("SAO PAULO");
+				cidade.setId(3550308);
+				
 				contato.setCidade(cidade);
 				dao.inserirContato(contato);
 			}else {

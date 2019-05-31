@@ -10,9 +10,9 @@ import com.meetup.Email;
 
 @SpringBootApplication
 @ComponentScan(basePackages= {"com.meetup","com.springunivers"})
-public class TesteBeanApplication {
+public class ExemploBeanApplication {
 	public static void main(String[] args) {
-		ConfigurableApplicationContext context = SpringApplication.run(TesteBeanApplication.class, args);
+		ConfigurableApplicationContext context = SpringApplication.run(ExemploBeanApplication.class, args);
 		Mensagem m = context.getBean(Mensagem.class);  
 		m.enviar();
 		m = context.getBean(Mensagem.class);  

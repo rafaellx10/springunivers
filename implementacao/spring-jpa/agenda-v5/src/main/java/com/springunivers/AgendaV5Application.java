@@ -16,7 +16,7 @@ public class AgendaV5Application {
 	@Bean
 	public CommandLineRunner run(ContatoDao dao) {
 		return args -> {
-			int AMIGO_ID=1;
+			int AMIGO_ID=6;
 			Contato amigo = dao.buscarContato(AMIGO_ID);
 			if(amigo!=null) {
 				Contato contato = new Contato();

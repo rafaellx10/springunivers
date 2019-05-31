@@ -13,7 +13,7 @@ public class Log {
 	@Column(name = "dt_inclusao",nullable = false)
 	private Date dataInclusao;
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "dt_alteracao",nullable = true)
+	@Column(name = "dt_alteracao")
 	private Date dataAlteracao;
 	public Date getDataInclusao() {
 		return dataInclusao;

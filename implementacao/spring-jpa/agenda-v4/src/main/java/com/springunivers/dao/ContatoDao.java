@@ -19,12 +19,20 @@ public class ContatoDao {
 		em.persist(contato);
 	}
 	@Transactional
+	public void alterarContato(Contato contato) {
+		em.merge(contato);
+	}
+	@Transactional
 	public void inserirCidade(Cidade cidade) {
 		em.persist(cidade);
 	}
 	public Cidade buscarCidade(Integer id) {
 		Cidade cidade = em.find(Cidade.class, id);
 		return cidade;
+	}
+	public Contato buscarContato(Integer id) {
+		Contato c = em.find(Contato.class, id);
+		return c;
 	}
 	
 	

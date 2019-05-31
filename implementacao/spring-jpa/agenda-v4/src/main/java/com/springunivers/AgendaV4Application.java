@@ -30,9 +30,8 @@ public class AgendaV4Application {
 				Telefone tel = new Telefone();
 				tel.setDdd(11);
 				tel.setNumero(978786514L);
-				tel.setTipo(TelefoneTipo.CEL);
+				tel.setTipo(TelefoneTipo.C);
 				contato.addTelefone(tel);
-				
 				contato.setCidade(cidade);
 				dao.inserirContato(contato);
 			}else {

@@ -1,5 +1,8 @@
 package com.springunivers.model;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -23,6 +26,16 @@ public class Contato {
 	
 	@Embedded
 	private Telefone telefone;
+	
+	@Embedded
+	@AttributeOverrides({
+        @AttributeOverride(name="ddd",
+                           column=@Column(name="ddd_cel")),
+        @AttributeOverride(name="numero",
+                           column=@Column(name="numero_cel"))
+    })
+	private Telefone celular;
+	
 	
 	@ManyToOne
 	@JoinColumn(name="v3_cid_id")
