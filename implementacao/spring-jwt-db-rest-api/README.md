@@ -9,7 +9,7 @@
 
 - Para exibir a documentação com Swagger, no navegador digite [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html) 
 
-- Se estiver usando o banco H2 em modo console http://localhost:8080/h2-console. 
+- Se estiver usando o banco H2 em modo console http://localhost:8080/h2-console (jdbc:h2:mem:testdb)
 
 - **SE PREFERIR** Cadastre as roles e usuários ADMIN e USER
 
