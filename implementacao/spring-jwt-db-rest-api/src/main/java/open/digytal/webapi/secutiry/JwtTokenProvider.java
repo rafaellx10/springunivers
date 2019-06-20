@@ -1,6 +1,8 @@
 package open.digytal.webapi.secutiry;
 
-import static open.digytal.webapi.secutiry.JwtConstants.*;
+import static open.digytal.webapi.secutiry.JwtConstants.ACCESS_TOKEN_VALIDITY_SECONDS;
+import static open.digytal.webapi.secutiry.JwtConstants.AUTHORITIES_KEY;
+import static open.digytal.webapi.secutiry.JwtConstants.SIGNING_KEY;
 
 import java.io.Serializable;
 import java.util.Arrays;

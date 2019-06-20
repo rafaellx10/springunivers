@@ -50,8 +50,8 @@ public class UsuarioResource {
 		System.out.println(JwtSession.getLogin());
 		return roleRepository.findAll();
 	}
-	@PostMapping(value="/role")
-	//@PreAuthorize(Roles.PRE_ADMIN)
+	@PostMapping(value="/roles")
+	@PreAuthorize(Roles.PRE_ADMIN)
 	public void incluirRole(@RequestBody Role role) {
 		roleRepository.save(role);
 	}
