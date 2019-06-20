@@ -37,17 +37,18 @@ public class UsuarioResource {
 	public List<Usuario> listar() {
 		return repository.findAll();
 	}
+	@PostMapping
+	@PreAuthorize(Roles.PRE_ADMIN)
+	public void incluir(@RequestBody Usuario usuario) {
+		usuario.setSenha(encoder.encode(usuario.getSenha()));
+		repository.save(usuario);
+	}
+	
 	@GetMapping(value="/roles")
 	//@PreAuthorize(Roles.PRE_USER_ADMIN)
 	public List<Role> listarRoles() {
 		System.out.println(JwtSession.getLogin());
 		return roleRepository.findAll();
-	}
-	@PostMapping
-	//@PreAuthorize(Roles.PRE_ADMIN)
-	public void incluir(@RequestBody Usuario usuario) {
-		usuario.setSenha(encoder.encode(usuario.getSenha()));
-		repository.save(usuario);
 	}
 	@PostMapping(value="/role")
 	//@PreAuthorize(Roles.PRE_ADMIN)
