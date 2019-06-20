@@ -19,17 +19,24 @@ public class CadastroResource {
 	@Autowired
 	private ContatoDao dao;
 	
-	@PostMapping(path = "/cidades")
-	public void incluirCidade(@RequestBody Cidade cidade) {
-		dao.inserirCidade(cidade);
-	}
+	
 	@PostMapping(path = "/contatos")
 	public void incluirContato(@RequestBody Contato contato) {
 		dao.inserirContato(contato);
 	}
+	
+	@GetMapping(path = "/contatos")
+	public List<Contato> listarContatos() {
+		return dao.listarContatos();
+	}
+	
+	@PostMapping(path = "/cidades")
+	public void incluirCidade(@RequestBody Cidade cidade) {
+		dao.inserirCidade(cidade);
+	}
+	
 	@GetMapping(path = "/cidades")
 	public List<Cidade> listarCidade() {
 		return dao.listarCidades();
 	}
-	
 }

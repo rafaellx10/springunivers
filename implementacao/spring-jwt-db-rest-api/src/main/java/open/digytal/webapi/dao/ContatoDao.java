@@ -34,5 +34,10 @@ public class ContatoDao {
 		Query query = em.createQuery("SELECT c FROM Cidade c ORDER BY c.nome");
 		return query.getResultList();
 	}
+	//listar todos
+	public List<Contato> listarContatos() {
+		Query query = em.createQuery("SELECT c FROM Contato c ORDER BY c.nome");
+		return query.getResultList();
+	}
 	
 }
