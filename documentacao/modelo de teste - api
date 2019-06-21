@@ -1,0 +1,25 @@
+-- TOKEN
+{
+  "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInNjb3BlcyI6IlJPTEVfQURNSU4iLCJpYXQiOjE1NjExMjgxODYsImV4cCI6MTU2MTE0NjE4Nn0.0Zk6cjpFCS_c4d8x-mxZdJ6_E3Sr8y5oOD4ZnVlmL7o"
+}
+-- PARNAIBA
+2207702
+{
+  "estado": "PI",
+  "ibge": 220,
+  "nome": "PARNAIBA"
+}
+
+-- CADASTRO DE CONTATO
+{
+  "cidade": {
+    "ibge": 220
+  },
+  "nome": "RAIANE",
+  "sobrenome": "OLIVEIRA",
+  "telefone": {
+    "ddd": 86,
+    "numero": 958584631
+  }
+}
+

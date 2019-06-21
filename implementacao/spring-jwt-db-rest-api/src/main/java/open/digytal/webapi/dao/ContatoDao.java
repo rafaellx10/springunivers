@@ -25,8 +25,8 @@ public class ContatoDao {
 	public void inserirCidade(Cidade cidade) {
 		em.persist(cidade);
 	}
-	public Cidade buscarCidade(Integer id) {
-		Cidade cidade = em.find(Cidade.class, id);
+	public Cidade buscarCidade(Long ibge) {
+		Cidade cidade = em.find(Cidade.class, ibge);
 		return cidade;
 	}
 	//listar todos

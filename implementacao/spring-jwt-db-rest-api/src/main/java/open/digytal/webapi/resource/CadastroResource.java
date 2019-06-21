@@ -15,18 +15,20 @@ import open.digytal.webapi.dao.ContatoDao;
 import open.digytal.webapi.model.Roles;
 import open.digytal.webapi.model.cadastro.Cidade;
 import open.digytal.webapi.model.cadastro.Contato;
+import open.digytal.webapi.repository.CidadeRepository;
 
 @RestController
 @RequestMapping("/cadastro")
 public class CadastroResource {
 	@Autowired
 	private ContatoDao dao;
-	
+	@Autowired
+	private CidadeRepository cidadeRepository;
 	
 	@PostMapping(path = "/contatos")
-	@PreAuthorize(Roles.PRE_USER_ADMIN)
+	//@PreAuthorize(Roles.PRE_USER_ADMIN)
 	public void incluirContato(@RequestBody Contato contato) {
-		Cidade cid = dao.buscarCidade(contato.getCidade().getIbge());
+		Cidade cid =cidadeRepository.findByIbge(contato.getCidade().getIbge());
 		contato.setCidade(cid);
 		dao.inserirContato(contato);
 	}
@@ -48,7 +50,7 @@ public class CadastroResource {
 		return dao.listarCidades();
 	}
 	@GetMapping(path = "/cidades/{ibge}")
-	public Cidade buscarCidade(@PathVariable("ibge") Integer ibge) {
+	public Cidade buscarCidade(@PathVariable("ibge") Long ibge) {
 		return dao.buscarCidade(ibge);
 	}
 }

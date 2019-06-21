@@ -9,17 +9,17 @@ import javax.persistence.Table;
 @Table(name="tb_cidade")
 public class Cidade {
 	@Id
-	//@GeneratedValue(strategy=GenerationType.AUTO)
-	private Integer ibge;
+	@Column(name = "ibge", length = 10)
+	private Long ibge;
 	@Column(length=50,nullable=false)
 	private String nome;
 	@Column(length=2,nullable=false)
 	private String estado;
 	
-	public Integer getIbge() {
+	public Long getIbge() {
 		return ibge;
 	}
-	public void setIbge(Integer ibge) {
+	public void setIbge(Long ibge) {
 		this.ibge = ibge;
 	}
 	public String getNome() {
