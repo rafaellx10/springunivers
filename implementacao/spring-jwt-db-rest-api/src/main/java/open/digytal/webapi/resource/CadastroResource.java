@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +26,8 @@ public class CadastroResource {
 	@PostMapping(path = "/contatos")
 	@PreAuthorize(Roles.PRE_USER_ADMIN)
 	public void incluirContato(@RequestBody Contato contato) {
+		Cidade cid = dao.buscarCidade(contato.getCidade().getIbge());
+		contato.setCidade(cid);
 		dao.inserirContato(contato);
 	}
 	
@@ -43,5 +46,9 @@ public class CadastroResource {
 	@GetMapping(path = "/cidades")
 	public List<Cidade> listarCidade() {
 		return dao.listarCidades();
+	}
+	@GetMapping(path = "/cidades/{ibge}")
+	public Cidade buscarCidade(@PathVariable("ibge") Integer ibge) {
+		return dao.buscarCidade(ibge);
 	}
 }

@@ -62,7 +62,7 @@ public class JwtWebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(SWAGGER_WHITELIST).permitAll()
                 .antMatchers("/h2-console/**").permitAll()
-                .antMatchers("/cadastro/cidades").permitAll()
+                .antMatchers("/cadastro/cidades/**").permitAll()
                 //.antMatchers("/usuarios/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/usuarios/roles/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/login").permitAll()

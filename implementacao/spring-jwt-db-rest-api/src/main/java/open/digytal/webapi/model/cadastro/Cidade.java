@@ -10,16 +10,17 @@ import javax.persistence.Table;
 public class Cidade {
 	@Id
 	//@GeneratedValue(strategy=GenerationType.AUTO)
-	private Integer id;
+	private Integer ibge;
 	@Column(length=50,nullable=false)
 	private String nome;
 	@Column(length=2,nullable=false)
 	private String estado;
-	public Integer getId() {
-		return id;
+	
+	public Integer getIbge() {
+		return ibge;
 	}
-	public void setId(Integer id) {
-		this.id = id;
+	public void setIbge(Integer ibge) {
+		this.ibge = ibge;
 	}
 	public String getNome() {
 		return nome;
@@ -32,10 +33,6 @@ public class Cidade {
 	}
 	public void setEstado(String estado) {
 		this.estado = estado;
-	}
-	@Override
-	public String toString() {
-		return "Cidade [id=" + id + ", nome=" + nome + ", estado=" + estado + "]";
 	}
 	
 }

@@ -35,9 +35,8 @@ public class Contato {
     })
 	private Telefone celular;
 	
-	
 	@ManyToOne
-	@JoinColumn(name="v3_cid_id")
+	@JoinColumn(name="cd_cidade")
 	private Cidade cidade;
 	
 	public Integer getId() {
