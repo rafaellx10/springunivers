@@ -33,7 +33,7 @@ public class CadastroResource {
 	public List<Contato> listarContatos() {
 		return dao.listarContatos();
 	}
-	
+	//https://cidades.ibge.gov.br/brasil/pi/parnaiba/panorama
 	@PostMapping(path = "/cidades")
 	@PreAuthorize(Roles.PRE_USER_ADMIN)
 	public void incluirCidade(@RequestBody Cidade cidade) {
