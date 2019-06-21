@@ -3,6 +3,7 @@ package open.digytal.webapi.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -24,12 +25,15 @@ public class Usuario {
     private String nome;
 	@Column(length=70)
     private String email;
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.EAGER) 
 	@JoinTable(name = "tb_user_roles", joinColumns = @JoinColumn(name = "login",nullable=false), inverseJoinColumns = @JoinColumn(name = "nome",nullable=false))
 	private Set<Role> roles = new HashSet<>();
 	
 	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
+	}
+	public void addRole(Role role) {
+		this.roles.add(role);
 	}
 	public Set<Role> getRoles() {
 		return roles;
