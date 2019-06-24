@@ -41,6 +41,20 @@ public class WebApiApplication {// WAR --> extends SpringBootServletInitializer 
 				repository.save(user);
 				LOGGER.info("Criando o Usuário ADMIN ");
 			};
+			if(repository.findByLogin("user")==null) {
+				Role r = new Role(Roles.USER.name());
+				roleRepository.save(r);
+				LOGGER.info("Criando a Role USER ");
+				Usuario user = new Usuario();
+				user.setLogin("user");
+				String senha = encoder.encode("user");
+				user.setSenha(senha);
+				user.setNome("CONVIDADO");
+				user.setEmail("convidade@springunivers.com.br");
+				user.addRole(r);
+				repository.save(user);
+				LOGGER.info("Criando o Usuário USER ");
+			};
 		};
 	}
 }

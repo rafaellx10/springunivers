@@ -67,13 +67,6 @@
 			<artifactId>h2</artifactId>
 		</dependency>
 
-		<!-- WAR FILE 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-tomcat</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		-->
 	</dependencies>
 
 	<build>

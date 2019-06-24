@@ -40,7 +40,7 @@ public class CadastroResource {
 	}
 	//https://cidades.ibge.gov.br/brasil/pi/parnaiba/panorama
 	@PostMapping(path = "/cidades")
-	@PreAuthorize(Roles.PRE_USER_ADMIN)
+	@PreAuthorize(Roles.PRE_ADMIN)
 	public void incluirCidade(@RequestBody Cidade cidade) {
 		dao.inserirCidade(cidade);
 	}
