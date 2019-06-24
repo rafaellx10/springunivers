@@ -45,6 +45,7 @@ public class UsuarioResource {
 	}
 	
 	@GetMapping(value="/roles")
+	@PreAuthorize(Roles.PRE_ADMIN)
 	public List<Role> listarRoles() {
 		System.out.println(JwtSession.getLogin());
 		return roleRepository.findAll();
