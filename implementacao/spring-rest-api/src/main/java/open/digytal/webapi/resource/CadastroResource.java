@@ -34,7 +34,7 @@ public class CadastroResource {
 	}
 	
 	@GetMapping(path = "/contatos")
-	@PreAuthorize(Roles.PRE_USER_ADMIN)
+	//@PreAuthorize(Roles.PRE_USER_ADMIN)
 	public List<Contato> listarContatos() {
 		return dao.listarContatos();
 	}
