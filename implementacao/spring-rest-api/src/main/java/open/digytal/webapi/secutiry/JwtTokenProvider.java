@@ -51,9 +51,12 @@ public class JwtTokenProvider implements Serializable {
 	public String generateToken(Authentication authentication) {
 		final String authorities = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority)
 				.collect(Collectors.joining(","));
-		return Jwts.builder().setSubject(authentication.getName()).claim(AUTHORITIES_KEY, authorities)
+		
+		Date exp = new Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDITY_SECONDS);
+		String token= Jwts.builder().setSubject(authentication.getName()).claim(AUTHORITIES_KEY, authorities)
 				.signWith(SignatureAlgorithm.HS256, SIGNING_KEY).setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDITY_SECONDS * 1000)).compact();
+				.setExpiration(exp).compact();
+		return token;
 	}
 
 	public Boolean validateToken(String token, UserDetails userDetails) {
