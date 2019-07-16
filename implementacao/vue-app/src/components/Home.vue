@@ -1,7 +1,7 @@
 <template>
   <el-container>
   <el-aside>
-    <el-menu :default-openeds="['1', '3']">
+    <el-menu :default-openeds="['1']">
       <el-submenu index="1">
         <template slot="title"><i class="el-icon-message"></i>Navigator One</template>
         <el-menu-item-group>
@@ -92,13 +92,8 @@
 <script>
   export default {
     data() {
-      const item = {
-        date: '2016-05-02',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles'
-      };
       return {
-        tableData: Array(20).fill(item)
+        tableData: []
       }
     }
   };
