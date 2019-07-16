@@ -19,6 +19,6 @@ public class StartHSQLDB {
 		final String[] dbArgs = { "--database.0", FILE_URL, "--dbname.0", "webapidb", "--port", "5454" };
 		org.hsqldb.server.Server.main(dbArgs);
 		final String[] serveArgs = { "--user", "sa", "--password", "", "--url", "jdbc:hsqldb:hsql://localhost:5454/webapidb"};
-		DatabaseManagerSwing.main(serveArgs);
+		//DatabaseManagerSwing.main(serveArgs);
 	}
 }
