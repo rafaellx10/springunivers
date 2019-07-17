@@ -1,19 +1,7 @@
 <template>
 <div>
 
-<div style="margin: 20px;"></div>
-<el-form label-width="100px" :model="form">
-  <el-form-item label="Username">
-    <el-input v-model="form.username"></el-input>
-  </el-form-item>
-  <el-form-item label="Password">
-    <el-input v-model="form.password"></el-input>
-  </el-form-item>
-  <el-form-item>
-    <el-button type="primary" @click="logar()" >Login</el-button>
-  </el-form-item>
-</el-form>
-
+ola
 </div>
 </template>
 <script>
