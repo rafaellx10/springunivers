@@ -2,7 +2,7 @@
   "name": "meetup",
   "version": "1.0.0",
   "description": "A Vue.js project",
-  "author": "Gleyson Sampaio <gleyson.sampaio@tcibpo.com>",
+  "author": "Gleyson <gzynho@hotmail.com>",
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
