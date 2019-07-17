@@ -1,10 +1,9 @@
 <template>
-<div>
-
-<div style="margin: 20px;"></div>
-
-HOME
-</div>
+    <div>
+      MAIN
+      <router-view />
+    </div>
+   
 </template>
 <script>
   import axios from 'axios';

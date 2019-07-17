@@ -1,7 +1,15 @@
 <template>
 <div>
-
-ola
+  <b-form inline>
+    <b-input
+      id="inline-form-input-name"
+      class="mb-2 mr-sm-2 mb-sm-0"
+      placeholder="Username" v-model="username"
+    ></b-input>
+    <b-input id="inline-form-input-username" placeholder="Password" v-model="password"></b-input>
+    
+    <b-button variant="primary" v-on:click="logar">Save</b-button>
+  </b-form>
 </div>
 </template>
 <script>
@@ -11,26 +19,23 @@ ola
       return {
         data: [],
         labelPosition: 'right',
-        form: {
-          username: '',
-          password: ''
-        }
+          username: 'admin',
+          password: 'admin'
+        
       }
     },
     mounted () {
       
   },
   methods: {
-    submitForm() {
-        console.log(this.form.username);
-      },
+   
     logar () {
-        console.log(this.form.username + "---"+ this.form.password)
-       axios.post('http://localhost:8081/login',{"username":this.form.username,"password":this.form.password}
+      console.log("USUARIO: " + this.username + " SENHA: "+ this.password)
+      axios.post('http://localhost:8081/login',{"username":this.username,"password":this.password}
        ).then(({ data }) => {
           console.log(data);
-          //LocalStorage.set('token', data.token);
-          //this.$router.push({path: '/app'})
+          localStorage.setItem('token', data.token);
+          this.$router.push('/app') 
         }).catch(({ error }) => {
            console.log("ERRO");
           console.log(error);
