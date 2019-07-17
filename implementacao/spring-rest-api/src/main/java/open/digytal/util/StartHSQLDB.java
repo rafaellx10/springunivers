@@ -3,7 +3,7 @@ package open.digytal.util;
 import org.hsqldb.util.DatabaseManagerSwing;
 
 public class StartHSQLDB {
-	static String FILE_URL = "file:/digytal/webapi/database/webapidb";
+	static String FILE_URL = "file:/springunivers/webapi/database/webapidb";
 
 	public static void main(String[] args) {
 		//local();
