@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>vue-cdn</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    {{ message }}
+    </p>
+    <button v-on:click="message = 'Mudei o valor de message'">Click</button>
+    
+    <p><h4>Sintaxe Template</h4></p>
+    <p><h5>Interpolação</h5></p>
+    <span>Mensagem: {{ message }}</span>
+
+    <p><h5>Atributo</h5></p>
+    <input v-bind:disabled="habilitado" size=50 v-model="message"/>
+
+    <p><h5>Abreviação</h5></p>
+    <input :disabled="habilitado" size=50 v-model="message"/>
+
+    <p><h5>Texto</h5></p>
+    <span v-once>Esse valor nunca será modificado: {{ message }}</span>
+
+    <p><h5>Expressões</h5></p>
+    Número {{ numero + 1 }}
+    </p>
+    {{ ok ? 'SIM' : 'NÃO' }}
+
+    <p><h5>Diretivas</h5></p>
+    <p v-if="ver">Agora você me viu</p>
+  </div>
+  <!-- built files will be auto injected -->
+</body>
+<script>
+  //instancia
+  var app = new Vue({
+    el: '#app',
+    data: {
+      numero: 1,
+      message: 'Spring Vue.js Variavel!',
+      ok:true,
+      habilitado:true,
+      ver:true
+    },
+    //ciclo de vida
+    created: function () {
+      console.log('message é: ' + this.message)
+    }
+  })
+  //observadores
+  app.$watch('message', function (newValue, oldValue) {
+    alert('alerta alteração de valor')
+  })
+</script>
+
+</html>

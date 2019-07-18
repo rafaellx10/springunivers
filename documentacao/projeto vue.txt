@@ -1,5 +1,9 @@
-link: https://medium.com/trainingcenter/criando-um-projeto-vuejs-com-o-vuecli-e-webstorm-58b695339c01
-link: https://vuejs-brasil.com.br/crie-rapidamente-um-projeto-vue-com-vue-cli-e-browserify/
+
+https://github.com/digytal/springunivers
+https://medium.com/trainingcenter/criando-um-projeto-vuejs-com-o-vuecli-e-webstorm-58b695339c01
+https://vuejs-brasil.com.br/crie-rapidamente-um-projeto-vue-com-vue-cli-e-browserify/
+https://www.youtube.com/channel/UCjF0OccBT05WxsJb2zNkL4g/playlists
+
 
 npm i -g vue-cli
 
@@ -9,4 +13,23 @@ vue init webpack [SEU_PROJETO]
 npm install --save axios vue-axios
 
 --bootstrap-vue
-https://bootstrap-vue.js.org/docs
+link: https://bootstrap-vue.js.org/docs
+
+
+{
+  "estado": "SP",
+  "ibge": 123,
+  "nome": "SAO PAULO"
+}
+{
+  "cidade": {
+    "ibge": 123
+  },
+  "nome": "GLEYSON",
+  "sobrenome": "SAMPAIO",
+  "telefone": {
+    "ddd": 11,
+    "numero": 98789987
+  }
+}
+
