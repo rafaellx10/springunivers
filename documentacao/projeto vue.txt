@@ -1,10 +1,12 @@
 link: https://medium.com/trainingcenter/criando-um-projeto-vuejs-com-o-vuecli-e-webstorm-58b695339c01
 link: https://vuejs-brasil.com.br/crie-rapidamente-um-projeto-vue-com-vue-cli-e-browserify/
 
-
-
 npm i -g vue-cli
 
-vue init webpack meetup
+vue init webpack [SEU_PROJETO]
 
-link: https://bootstrap-vue.js.org/docs
+--axios API CLIENT
+npm install --save axios vue-axios
+
+--bootstrap-vue
+https://bootstrap-vue.js.org/docs
