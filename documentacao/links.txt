@@ -16,3 +16,6 @@ http://www.java2s.com/Tutorials/Java/JPA/4520__JPA_Query_Function.htm
 kotlin:
 https://docs.spring.io/sts/nan/v373/SpringToolSuiteAndKotlin.html
 https://marketplace.eclipse.org/content/kotlin-plugin-eclipse
+https://code.tutsplus.com/pt/tutorials/kotlin-from-scratch-classes-and-objects--cms-29590
+https://code.tutsplus.com/tutorials/kotlin-from-scratch-variables-basic-types-arrays-type-inference-and-comments--cms-29328
+
